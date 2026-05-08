@@ -19,7 +19,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
 const cfg = window.PROTA_CONTACT_CONFIG || {};
-const FALLBACK_EMAIL = "vsteward@gmail.com";
+const FALLBACK_EMAIL = "vernon@protastudios.com";
 
 const form = document.getElementById("contact-form");
 if (!form) {
