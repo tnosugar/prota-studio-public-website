@@ -371,21 +371,18 @@
       <div class="tier-card">
         <div class="name">L1 Diagnostic</div>
         <div class="duration">2 weeks</div>
-        <div class="price">$15K to $25K</div>
         <div class="desc">A fast outside read on what you already know. Risk-scored recommendation memo with confidence levels.</div>
         <div class="audience">Board pressure. Pre-pivot read. A fast second opinion.</div>
       </div>
       <div class="tier-card featured">
         <div class="name">L2 Sprint</div>
         <div class="duration">4 to 6 weeks</div>
-        <div class="price">$50K to $75K</div>
         <div class="desc">Two to three live, instrumented tests. A kill-or-commit memo backed by new evidence and a 90-day roadmap.</div>
         <div class="audience">Mid-build teams facing a capital commit or roadmap call.</div>
       </div>
       <div class="tier-card">
         <div class="name">L3 Extended</div>
         <div class="duration">12 weeks</div>
-        <div class="price">$125K to $200K</div>
         <div class="desc">Two validation loops. Activation prototypes. Growth model. Operating engine handed to your team.</div>
         <div class="audience">Teams with early signal who need proof at scale or a BU-level handoff.</div>
       </div>
@@ -517,7 +514,7 @@
       Got it. We will reach out within one business day with two or three time windows that work. If it is urgent, email us directly at <a href="mailto:vsteward@gmail.com" style="color: var(--teal); font-weight: 700;">vsteward@gmail.com</a>.
     </div>
 
-    <form class="contact" id="contact-form" onsubmit="return handleSubmit(event)">
+    <form id="contact-form" class="contact" novalidate>
       <div class="field-row">
         <div class="field">
           <label for="name">Full name <span class="required">*</span></label>
@@ -592,19 +589,7 @@
   </div>
 </footer>
 
-<script>
-  function handleSubmit(event) {
-    event.preventDefault();
-    var form = document.getElementById('contact-form');
-    var honeypot = document.getElementById('company-website').value;
-    if (honeypot) { return false; }
-    // v1 prototype: show success state. Real submission wires up server-side.
-    document.getElementById('success').classList.add('visible');
-    form.style.display = 'none';
-    document.getElementById('success').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return false;
-  }
-</script>
-
+<script src="/contact-form.config.js"></script>
+<script type="module" src="/contact-form.js"></script>
 </body>
 </html>
