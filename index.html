@@ -16,6 +16,84 @@
 <meta property="og:image" content="https://cdn.prod.website-files.com/6714145300c4bdab5926bdb8/693be24a6fe74f0709d5c731_Prota-OpenGraph.jpg" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
+<style>
+  /* Hero: two-column layout. Text left, image right. Stacks below 900px. */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .hero-grid .hero-image {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--alt, #f3f5f9);
+  }
+  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
+  }
+
+  /* Logo wall replaces the prose trust strip. Monochrome by default,
+     color on hover so the wall feels alive without being garish. */
+  .logo-wall {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 36px 48px;
+    align-items: center;
+    justify-items: center;
+  }
+  .logo-wall img {
+    height: 28px;
+    width: auto;
+    max-width: 140px;
+    filter: grayscale(100%);
+    opacity: 0.75;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+  }
+  .logo-wall img:hover { opacity: 1; filter: grayscale(0%); }
+  @media (max-width: 800px) {
+    .logo-wall { grid-template-columns: repeat(3, 1fr); gap: 28px 24px; }
+    .logo-wall img { height: 22px; }
+  }
+
+  /* Outline icons on service / role cards */
+  .card-icon {
+    display: inline-flex;
+    width: 44px; height: 44px;
+    align-items: center; justify-content: center;
+    background: var(--alt, #f3f5f9);
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+  .card-icon img { width: 24px; height: 24px; opacity: 0.75; }
+  .card.featured .card-icon { background: rgba(31, 56, 100, 0.07); }
+
+  /* Image-led case-study tile */
+  .work-card {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--black-100, #e5e7eb);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--white, #fff);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .work-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31, 56, 100, 0.10); }
+  .work-card .photo {
+    width: 100%; aspect-ratio: 16/10; overflow: hidden;
+    background: var(--alt, #f3f5f9);
+  }
+  .work-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+  .work-card h3 { margin: 0 0 8px; font-size: 19px; }
+  .work-card p { margin: 0 0 16px; flex: 1; }
+  .work-card .card-cta { font-weight: 600; }
+</style>
 </head>
 <body>
 
@@ -35,48 +113,71 @@
 
 <!-- Hero -->
 <section class="block">
-  <div class="container-narrow">
-    <span class="eyebrow">Validate, for the agentic age</span>
-    <h1>Knowing what works is the new bottleneck.</h1>
-    <p class="lede">AI collapsed the cost of building. It did not collapse the cost of building the wrong thing. We continuously validate products and communications for AI-era teams, so capital, headcount, and roadmap go to what actually works.</p>
-    <div class="cta-row">
-      <a href="/contact/" class="btn-primary">Book a 30-minute call</a>
-      <a href="/how-it-works/" class="btn-secondary">See the methodology</a>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="text">
+        <span class="eyebrow">Validate, for the agentic age</span>
+        <h1>Knowing what works is the new bottleneck.</h1>
+        <p class="lede">AI collapsed the cost of building. It did not collapse the cost of building the wrong thing. We continuously validate products and communications for AI-era teams, so capital, headcount, and roadmap go to what actually works.</p>
+        <div class="cta-row">
+          <a href="/contact/" class="btn-primary">Book a 30-minute call</a>
+          <a href="/how-it-works/" class="btn-secondary">See the methodology</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="/brand/assets/home-heart.webp" alt="Driven by heart and data" loading="eager" />
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Trust strip -->
-<div class="trust-strip">
+<!-- Logo wall -->
+<section class="block alt">
   <div class="container">
-    Same playbook that ran 100-plus experiments for Citi Ventures and the demand test that shaped Visa's launch. Experience with Bird Buddy, Audubon, Exelon, Clorox, Daikin, Stix.
+    <p class="center muted" style="margin: 0 0 32px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Same playbook. Real teams.</p>
+    <div class="logo-wall">
+      <img src="/brand/assets/logos/citi.svg" alt="Citi" />
+      <img src="/brand/assets/logos/visa.svg" alt="Visa" />
+      <img src="/brand/assets/logos/clorox.svg" alt="Clorox" />
+      <img src="/brand/assets/logos/birdbuddy.svg" alt="Bird Buddy" />
+      <img src="/brand/assets/logos/audubon.svg" alt="Audubon" />
+      <img src="/brand/assets/logos/exelon.svg" alt="Exelon" />
+      <img src="/brand/assets/logos/stix.svg" alt="Stix" />
+      <img src="/brand/assets/logos/daikin.svg" alt="Daikin" />
+      <img src="/brand/assets/logos/fresh-step.svg" alt="Fresh Step" />
+      <img src="/brand/assets/logos/charger-help.svg" alt="Charger Help" />
+      <img src="/brand/assets/logos/vinetta.svg" alt="Vinetta" />
+      <img src="/brand/assets/logos/wave-neuro.png" alt="Wave Neuro" />
+    </div>
   </div>
-</div>
+</section>
 
 <!-- Two services -->
-<section class="block alt">
+<section class="block">
   <div class="container">
     <h2 class="section center">One methodology, two cadences.</h2>
     <p class="center muted" style="max-width: 720px; margin: -16px auto 48px;">Pick the one that matches your decision clock.</p>
     <div class="cards cols-2">
       <div class="card featured">
+        <span class="card-icon"><img src="/brand/assets/icons/rocket.svg" alt="" /></span>
         <span class="eyebrow">Episodic · 30 / 60 / 90 days</span>
         <h3>Learning Sprint</h3>
-        <p>For one decision-grade question that needs an answer on a date, a fundraise, a roadmap call, a board commit, a launch. Three tiers: <strong>L1 Diagnostic</strong>, <strong>L2 Sprint</strong>, <strong>L3 Extended</strong>. We design the tests, run them, instrument them, and deliver a two-page memo with kill / reshape / continue marked against every load-bearing assumption.</p>
+        <p>For one decision-grade question that needs an answer on a date. A fundraise, a roadmap call, a board commit, a launch. Three tiers: <strong>L1 Diagnostic</strong>, <strong>L2 Sprint</strong>, <strong>L3 Extended</strong>. We design the tests, run them, instrument them, and deliver a two-page memo with kill / reshape / continue marked against every load-bearing assumption.</p>
         <a href="/learning-sprint/" class="card-cta">Learn more</a>
       </div>
       <div class="card featured">
+        <span class="card-icon"><img src="/brand/assets/icons/analytics.svg" alt="" /></span>
         <span class="eyebrow">Ongoing · Monthly retainer</span>
         <h3>Continuous Validation</h3>
-        <p>For teams whose validation question keeps changing, innovation arms running portfolios of bets, scaleups in growth-strategy mode, founders iterating on positioning weekly. Same methodology, applied on rolling cycles across products and communications. Insights compound across cycles instead of starting from zero each Sprint.</p>
+        <p>For teams whose validation question keeps changing. Innovation arms running portfolios of bets, scaleups in growth-strategy mode, founders iterating on positioning weekly. Same methodology, applied on rolling cycles across products and communications. Insights compound across cycles instead of starting from zero each Sprint.</p>
         <a href="/continuous/" class="card-cta">Learn more</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- What we validate -->
-<section class="block">
+<!-- Two surfaces -->
+<section class="block alt">
   <div class="container">
     <h2 class="section center">Two surfaces, one framework.</h2>
     <div class="cards cols-2">
@@ -93,25 +194,29 @@
   </div>
 </section>
 
-<!-- Who it is for -->
-<section class="block alt">
+<!-- Built for four roles -->
+<section class="block">
   <div class="container">
     <h2 class="section center">Built for four roles.</h2>
     <p class="center muted" style="max-width: 720px; margin: -16px auto 48px;">Each one arrives with a validation question. The framework gives them an answer.</p>
     <div class="cards cols-4">
       <div class="card">
+        <span class="card-icon"><img src="/brand/assets/icons/rocket.svg" alt="" /></span>
         <h3>Founders</h3>
         <p>Validating demand for an AI-era product before the next fundraise.</p>
       </div>
       <div class="card">
+        <span class="card-icon"><img src="/brand/assets/icons/albums.svg" alt="" /></span>
         <h3>Product leaders</h3>
         <p>Validating which of N concepts to fund this quarter.</p>
       </div>
       <div class="card">
+        <span class="card-icon"><img src="/brand/assets/icons/business.svg" alt="" /></span>
         <h3>Innovation leads</h3>
         <p>Running portfolios that need comparable, defensible signal across bets.</p>
       </div>
       <div class="card">
+        <span class="card-icon"><img src="/brand/assets/icons/analytics.svg" alt="" /></span>
         <h3>Growth & brand</h3>
         <p>Validating which strategy, channel, or positioning will move the KPIs before budget commits.</p>
       </div>
@@ -120,7 +225,7 @@
 </section>
 
 <!-- Why us -->
-<section class="block">
+<section class="block alt">
   <div class="container-narrow">
     <h2 class="section center">Why us.</h2>
     <details open>
@@ -143,30 +248,42 @@
 </section>
 
 <!-- Recent work -->
-<section class="block alt">
+<section class="block">
   <div class="container">
     <h2 class="section center">Recent work.</h2>
-    <div class="cards cols-4">
-      <div class="card">
-        <h3>Citi Ventures</h3>
-        <p>100-plus product experiments over nine years. Comparable-signals framework adopted across the bet portfolio.</p>
-        <a href="/work/citi-ventures/" class="card-cta">Read more</a>
-      </div>
-      <div class="card">
-        <h3>Bird Buddy</h3>
-        <p>Demand-test work supporting a crowdfunding raise that funded the seed round.</p>
-        <a href="/work/birdbuddy/" class="card-cta">Read more</a>
-      </div>
-      <div class="card">
-        <h3>Audubon</h3>
-        <p>Interactive bird-migration prototype validated as a product surface, not a marketing artifact.</p>
-        <a href="/work/audubon/" class="card-cta">Read more</a>
-      </div>
-      <div class="card">
-        <h3>Exelon</h3>
-        <p>Enterprise innovation validation inside a regulated industry.</p>
-        <a href="/work/exelon/" class="card-cta">Read more</a>
-      </div>
+    <div class="cards cols-4" style="gap: 24px;">
+      <a href="/work/citi-ventures/" class="work-card">
+        <div class="photo"><img src="/brand/assets/work/citi.webp" alt="Citi Ventures" loading="lazy" /></div>
+        <div class="body">
+          <h3>Citi Ventures</h3>
+          <p>100-plus product experiments over nine years. Comparable-signals framework adopted across the bet portfolio.</p>
+          <span class="card-cta">Read more</span>
+        </div>
+      </a>
+      <a href="/work/birdbuddy/" class="work-card">
+        <div class="photo"><img src="/brand/assets/work/birdbuddy.webp" alt="Bird Buddy" loading="lazy" /></div>
+        <div class="body">
+          <h3>Bird Buddy</h3>
+          <p>Demand-test work supporting a crowdfunding raise that funded the seed round.</p>
+          <span class="card-cta">Read more</span>
+        </div>
+      </a>
+      <a href="/work/audubon/" class="work-card">
+        <div class="photo"><img src="/brand/assets/work/audubon.webp" alt="Audubon" loading="lazy" /></div>
+        <div class="body">
+          <h3>Audubon</h3>
+          <p>Interactive bird-migration prototype validated as a product surface, not a marketing artifact.</p>
+          <span class="card-cta">Read more</span>
+        </div>
+      </a>
+      <a href="/work/exelon/" class="work-card">
+        <div class="photo"><img src="/brand/assets/work/exelon.webp" alt="Exelon" loading="lazy" /></div>
+        <div class="body">
+          <h3>Exelon</h3>
+          <p>Enterprise innovation validation inside a regulated industry.</p>
+          <span class="card-cta">Read more</span>
+        </div>
+      </a>
     </div>
     <p class="center" style="margin-top: 32px;"><a href="/work/" class="card-cta">See all work</a></p>
   </div>
@@ -181,7 +298,6 @@
   </div>
 </section>
 
-<!-- Footer -->
 <footer class="site">
   <div class="container">
     <div class="footer-grid">
