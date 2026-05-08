@@ -10,11 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/assets/prota-favicon-small.png" />
 <link rel="apple-touch-icon" href="/brand/assets/prota-brandmark-favicon-large.png" />
-<meta property="og:title" content="Learning Sprint by Prota Studios. Validate for the agentic age." />
-<meta property="og:description" content="Prota's Validate program, productized for teams shipping with AI. Kill-or-commit decisions in weeks, not quarters." />
-<meta property="og:image" content="https://cdn.prod.website-files.com/6714145300c4bdab5926bdb8/693be24a6fe74f0709d5c731_Prota-OpenGraph.jpg" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
 <style>
   /* prota-studio brand palette (extracted from protastudios.com 2026-04-26).
      Variable names preserved; values mapped to the brand. See brand/assets/palette.json. */
@@ -285,6 +280,58 @@
     section.block, section.hero { padding: 56px 0; }
   }
 </style>
+
+<style>
+  /* Visual layer — added 2026-05-08 */
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .hero-grid .hero-image { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
+  }
+  .accent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 32px; }
+  .accent-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; display: block; }
+  @media (max-width: 800px) { .accent-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .audience-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .audience-card { border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); display: flex; flex-direction: column; }
+  .audience-card .photo { aspect-ratio: 16/10; overflow: hidden; }
+  .audience-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .audience-card .body { padding: 20px 22px 22px; }
+  .audience-card h3 { margin: 0 0 6px; font-size: 17px; }
+  .audience-card p { margin: 0; font-size: 15px; line-height: 1.6; }
+  .logo-wall { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px 40px; align-items: center; justify-items: center; margin-top: 24px; }
+  .logo-wall img { height: 26px; width: auto; max-width: 130px; filter: grayscale(100%); opacity: 0.75; transition: opacity 0.2s, filter 0.2s; }
+  .logo-wall img:hover { opacity: 1; filter: grayscale(0%); }
+  @media (max-width: 800px) { .logo-wall { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .steps-with-accents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .step-card { display: flex; gap: 20px; padding: 22px 24px; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; background: var(--white, #fff); }
+  .step-card .num { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--prota-blue, #1F3864); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+  .step-card h4 { margin: 0 0 6px; font-size: 17px; }
+  .step-card p { margin: 0; font-size: 14px; line-height: 1.6; }
+  @media (max-width: 800px) { .steps-with-accents { grid-template-columns: 1fr; } }
+  .work-card { display: flex; flex-direction: column; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
+  .work-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31, 56, 100, 0.10); }
+  .work-card .photo { aspect-ratio: 16/10; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .work-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+  .work-card h3 { margin: 0 0 8px; font-size: 19px; }
+  .work-card p { margin: 0 0 16px; flex: 1; }
+  .work-card .card-cta { font-weight: 600; }
+</style>
+<meta property="og:title" content="Learning Sprint | AI made shipping cheap. We make knowing fast — Prota Studios" />
+<meta property="og:description" content="Episodic 30 / 60 / 90-day validation. Decision-grade evidence on a fixed clock." />
+<meta property="og:image" content="https://protastudios.ai/brand/assets/og/learning-sprint.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:alt" content="Episodic 30 / 60 / 90-day validation. Decision-grade evidence on a fixed clock." />
+<meta property="og:url" content="https://protastudios.ai/learning-sprint/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Learning Sprint | AI made shipping cheap. We make knowing fast — Prota Studios" />
+<meta name="twitter:description" content="Episodic 30 / 60 / 90-day validation. Decision-grade evidence on a fixed clock." />
+<meta name="twitter:image" content="https://protastudios.ai/brand/assets/og/learning-sprint.png" />
 </head>
 <body>
 
@@ -311,15 +358,34 @@
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <div class="chip">New &middot; Validate, for the agentic age</div>
+    <div class="hero-grid">
+      <div class="text"><div class="chip">New &middot; Validate, for the agentic age</div>
     <h1 class="hero">AI made shipping cheap.<br />We make knowing fast.</h1>
     <p class="subhead">Prota&rsquo;s Validate program, reworked for teams shipping with AI. A productized engagement that turns &ldquo;we shipped, we are not sure if anyone wants it&rdquo; into a kill-or-commit decision backed by real evidence, in weeks not quarters.</p>
     <div class="cta-row">
       <a href="#contact" class="btn-primary">Book a 30-minute call</a>
       <a href="#tiers" class="btn-secondary">See the three tiers</a>
+    </div></div>
+      <div class="hero-image"><img src="/brand/assets/heroes/tailor-made.webp" alt="" loading="eager" /></div>
     </div>
-    <div class="trust-strip">
-      Same playbook that ran <strong>100-plus experiments for Citi Ventures</strong> and the <strong>demand test that shaped Visa&rsquo;s launch</strong>. Experience with Clorox, Audubon, Daikin, Bird Buddy, Stix.
+  </div>
+</section>
+<section class="block alt">
+  <div class="container">
+    <p class="center muted" style="margin: 0 0 8px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Same playbook. Real teams.</p>
+    <div class="logo-wall">
+      <img src="/brand/assets/logos/citi.svg" alt="Citi" />
+      <img src="/brand/assets/logos/visa.svg" alt="Visa" />
+      <img src="/brand/assets/logos/clorox.svg" alt="Clorox" />
+      <img src="/brand/assets/logos/birdbuddy.svg" alt="Bird Buddy" />
+      <img src="/brand/assets/logos/audubon.svg" alt="Audubon" />
+      <img src="/brand/assets/logos/exelon.svg" alt="Exelon" />
+      <img src="/brand/assets/logos/stix.svg" alt="Stix" />
+      <img src="/brand/assets/logos/daikin.svg" alt="Daikin" />
+      <img src="/brand/assets/logos/fresh-step.svg" alt="Fresh Step" />
+      <img src="/brand/assets/logos/charger-help.svg" alt="Charger Help" />
+      <img src="/brand/assets/logos/vinetta.svg" alt="Vinetta" />
+      <img src="/brand/assets/logos/wave-neuro.png" alt="Wave Neuro" />
     </div>
   </div>
 </section>

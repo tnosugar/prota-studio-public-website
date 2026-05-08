@@ -11,10 +11,58 @@
 <link rel="stylesheet" href="/site.css" />
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/assets/prota-favicon-small.png" />
 <link rel="apple-touch-icon" href="/brand/assets/prota-brandmark-favicon-large.png" />
-<meta property="og:title" content="About | Prota Studios, The validation specialist" />
-<meta property="og:description" content="Nine years of evidence work, 100-plus engagements, one focused practice: continuous validation for AI-era teams." />
-<meta property="og:image" content="https://cdn.prod.website-files.com/6714145300c4bdab5926bdb8/693be24a6fe74f0709d5c731_Prota-OpenGraph.jpg" />
+
+<style>
+  /* Visual layer — added 2026-05-08 */
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .hero-grid .hero-image { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
+  }
+  .accent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 32px; }
+  .accent-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; display: block; }
+  @media (max-width: 800px) { .accent-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .audience-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .audience-card { border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); display: flex; flex-direction: column; }
+  .audience-card .photo { aspect-ratio: 16/10; overflow: hidden; }
+  .audience-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .audience-card .body { padding: 20px 22px 22px; }
+  .audience-card h3 { margin: 0 0 6px; font-size: 17px; }
+  .audience-card p { margin: 0; font-size: 15px; line-height: 1.6; }
+  .logo-wall { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px 40px; align-items: center; justify-items: center; margin-top: 24px; }
+  .logo-wall img { height: 26px; width: auto; max-width: 130px; filter: grayscale(100%); opacity: 0.75; transition: opacity 0.2s, filter 0.2s; }
+  .logo-wall img:hover { opacity: 1; filter: grayscale(0%); }
+  @media (max-width: 800px) { .logo-wall { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .steps-with-accents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .step-card { display: flex; gap: 20px; padding: 22px 24px; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; background: var(--white, #fff); }
+  .step-card .num { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--prota-blue, #1F3864); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+  .step-card h4 { margin: 0 0 6px; font-size: 17px; }
+  .step-card p { margin: 0; font-size: 14px; line-height: 1.6; }
+  @media (max-width: 800px) { .steps-with-accents { grid-template-columns: 1fr; } }
+  .work-card { display: flex; flex-direction: column; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
+  .work-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31, 56, 100, 0.10); }
+  .work-card .photo { aspect-ratio: 16/10; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .work-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+  .work-card h3 { margin: 0 0 8px; font-size: 19px; }
+  .work-card p { margin: 0 0 16px; flex: 1; }
+  .work-card .card-cta { font-weight: 600; }
+</style>
+<meta property="og:title" content="About | We do one thing well — Prota Studios" />
+<meta property="og:description" content="Validation, since 2017. 100-plus product experiments at Citi alone." />
+<meta property="og:image" content="https://protastudios.ai/brand/assets/og/about.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:alt" content="Validation, since 2017. 100-plus product experiments at Citi alone." />
+<meta property="og:url" content="https://protastudios.ai/about/" />
 <meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="About | We do one thing well — Prota Studios" />
+<meta name="twitter:description" content="Validation, since 2017. 100-plus product experiments at Citi alone." />
+<meta name="twitter:image" content="https://protastudios.ai/brand/assets/og/about.png" />
 </head>
 <body>
 
@@ -33,9 +81,13 @@
 </nav>
 
 <section class="block">
-  <div class="container-narrow">
-    <h1>We do one thing well.</h1>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="text"><h1>We do one thing well.</h1>
     <p class="lede">Prota Studios is a validation studio. We have run 100-plus product experiments at Citi Ventures, demand tests for Visa, Bird Buddy, and Stix, and innovation validation for Clorox, Daikin, Exelon, and Audubon. Across nine years and a wide spread of industries, the work has stayed the same shape: turn the riskiest commercial assumptions into evidence, on a clock the business actually has.</p>
+  </div>
+      <div class="hero-image"><img src="/brand/assets/heroes/ygom.webp" alt="" loading="eager" /></div>
+    </div>
   </div>
 </section>
 
@@ -44,7 +96,13 @@
     <h2 class="section">Why focus on validation.</h2>
     <p>AI has collapsed the cost of building. The teams we work with are shipping faster than at any point in the last decade, and they are increasingly unsure whether what they ship will land. The bottleneck used to be build. Now it is knowing.</p>
     <p>We chose to specialize. Other firms, including our sister entity Prota Ventures, handle incubation, design, build, and growth. Prota Studios runs validation. One methodology, two cadences (episodic Learning Sprints and ongoing Continuous Validation programs), pointed at the one question every team is now wrestling with: does this work?</p>
-  </div>
+  
+    <div class="accent-grid">
+      <div class="text" style="font-size: 17px; line-height: 1.7; color: #4a4a4a;">
+        <p style="margin:0;">Validation is what AI-era teams keep coming back for. Build cycles compress. Decisions don't. The cost of a bad ship is whatever AI saved you on the build, multiplied by the headcount you put behind it. Decision-grade evidence is the multiplier on the other side.</p>
+      </div>
+      <img src="/brand/assets/heroes/tailor-made.webp" alt="" loading="lazy" />
+    </div></div>
 </section>
 
 <section class="block">

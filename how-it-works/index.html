@@ -11,10 +11,58 @@
 <link rel="stylesheet" href="/site.css" />
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/assets/prota-favicon-small.png" />
 <link rel="apple-touch-icon" href="/brand/assets/prota-brandmark-favicon-large.png" />
-<meta property="og:title" content="How it works | The validation methodology, Prota Studios" />
-<meta property="og:description" content="Seven steps from question to decision. The methodology that powers our Learning Sprints and Continuous Validation programs." />
-<meta property="og:image" content="https://cdn.prod.website-files.com/6714145300c4bdab5926bdb8/693be24a6fe74f0709d5c731_Prota-OpenGraph.jpg" />
+
+<style>
+  /* Visual layer — added 2026-05-08 */
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .hero-grid .hero-image { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
+  }
+  .accent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 32px; }
+  .accent-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; display: block; }
+  @media (max-width: 800px) { .accent-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .audience-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .audience-card { border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); display: flex; flex-direction: column; }
+  .audience-card .photo { aspect-ratio: 16/10; overflow: hidden; }
+  .audience-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .audience-card .body { padding: 20px 22px 22px; }
+  .audience-card h3 { margin: 0 0 6px; font-size: 17px; }
+  .audience-card p { margin: 0; font-size: 15px; line-height: 1.6; }
+  .logo-wall { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px 40px; align-items: center; justify-items: center; margin-top: 24px; }
+  .logo-wall img { height: 26px; width: auto; max-width: 130px; filter: grayscale(100%); opacity: 0.75; transition: opacity 0.2s, filter 0.2s; }
+  .logo-wall img:hover { opacity: 1; filter: grayscale(0%); }
+  @media (max-width: 800px) { .logo-wall { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .steps-with-accents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .step-card { display: flex; gap: 20px; padding: 22px 24px; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; background: var(--white, #fff); }
+  .step-card .num { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--prota-blue, #1F3864); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+  .step-card h4 { margin: 0 0 6px; font-size: 17px; }
+  .step-card p { margin: 0; font-size: 14px; line-height: 1.6; }
+  @media (max-width: 800px) { .steps-with-accents { grid-template-columns: 1fr; } }
+  .work-card { display: flex; flex-direction: column; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
+  .work-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31, 56, 100, 0.10); }
+  .work-card .photo { aspect-ratio: 16/10; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .work-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+  .work-card h3 { margin: 0 0 8px; font-size: 19px; }
+  .work-card p { margin: 0 0 16px; flex: 1; }
+  .work-card .card-cta { font-weight: 600; }
+</style>
+<meta property="og:title" content="How it works | Seven steps from question to decision — Prota Studios" />
+<meta property="og:description" content="One methodology, two cadences. Same evidence standard." />
+<meta property="og:image" content="https://protastudios.ai/brand/assets/og/how-it-works.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:alt" content="One methodology, two cadences. Same evidence standard." />
+<meta property="og:url" content="https://protastudios.ai/how-it-works/" />
 <meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="How it works | Seven steps from question to decision — Prota Studios" />
+<meta name="twitter:description" content="One methodology, two cadences. Same evidence standard." />
+<meta name="twitter:image" content="https://protastudios.ai/brand/assets/og/how-it-works.png" />
 </head>
 <body>
 
@@ -34,11 +82,14 @@
 
 <!-- Hero -->
 <section class="block">
-  <div class="container-narrow">
-    <h1>Seven steps from question to decision.</h1>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="text"><h1>Seven steps from question to decision.</h1>
     <p class="lede">One methodology, two cadences. The Learning Sprint runs the seven steps once, on a fixed scope and a fixed clock. Continuous Validation runs them on a rolling cycle. Same evidence standard. Same decision-ready output.</p>
     <div class="cta-row">
       <a href="/contact/" class="btn-primary">Talk to us</a>
+    </div></div>
+      <div class="hero-image"><img src="/brand/assets/heroes/about-us-hero.jpg" alt="" loading="eager" /></div>
     </div>
   </div>
 </section>
@@ -47,43 +98,7 @@
 <section class="block alt">
   <div class="container-narrow">
     <h2 class="section">The seven steps.</h2>
-    <ol class="steps">
-      <li>
-        <h3>Assumptions</h3>
-        <p>Surface every load-bearing assumption behind the decision. Make them explicit, named, and sortable by risk.</p>
-        <div class="meta"><span><strong>Artifact:</strong> Assumption inventory with risk ranking.</span> <span><strong>Typical:</strong> 2-5 days.</span></div>
-      </li>
-      <li>
-        <h3>Opportunity</h3>
-        <p>Frame the commercial opportunity in the language of demand, not the language of solution. What is the customer hiring this product, brand, or channel to do?</p>
-        <div class="meta"><span><strong>Artifact:</strong> Opportunity brief with a sized hypothesis.</span> <span><strong>Typical:</strong> 3-7 days.</span></div>
-      </li>
-      <li>
-        <h3>Competitive</h3>
-        <p>Map the alternatives the customer is comparing you against, including the alternative of doing nothing. Identify which alternatives have unfair advantages and which have exploitable weaknesses.</p>
-        <div class="meta"><span><strong>Artifact:</strong> Competitive landscape with positioning gaps.</span> <span><strong>Typical:</strong> 3-5 days.</span></div>
-      </li>
-      <li>
-        <h3>Audience</h3>
-        <p>Define who the evidence has to come from. Customer segments, the trigger event that brings them into the market, the language they use to describe the problem.</p>
-        <div class="meta"><span><strong>Artifact:</strong> Target audience profile and recruiting plan.</span> <span><strong>Typical:</strong> 3-5 days.</span></div>
-      </li>
-      <li>
-        <h3>Value Propositions</h3>
-        <p>Draft the value propositions that have to land for the bet to work. Test them against the audience, in their language, before investing in design or build.</p>
-        <div class="meta"><span><strong>Artifact:</strong> Value-prop test results with confidence levels per claim.</span> <span><strong>Typical:</strong> 5-10 days.</span></div>
-      </li>
-      <li>
-        <h3>Marketing & Acquisition</h3>
-        <p>Test the channels, messages, and creative that will move the KPIs. Validate the path to customer, not just the product.</p>
-        <div class="meta"><span><strong>Artifact:</strong> Channel and message test results with cost-per-action benchmarks.</span> <span><strong>Typical:</strong> 7-14 days.</span></div>
-      </li>
-      <li>
-        <h3>Framework</h3>
-        <p>Roll the evidence into a decision-ready memo. Every load-bearing assumption marked supported, invalidated, or inconclusive, with evidence attached and confidence level named. Recommendation explicit: kill, reshape, or commit.</p>
-        <div class="meta"><span><strong>Artifact:</strong> Two-page decision memo. Built for a board to read.</span> <span><strong>Typical:</strong> 2-3 days.</span></div>
-      </li>
-    </ol>
+    <div class="steps-with-accents"><div class="step-card"><div class="num">1</div><div><h4>Assumptions</h4><p>Surface every load-bearing assumption behind the decision. Make them explicit, named, and sortable by risk.</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Assumption inventory with risk ranking.</span> <span><strong>Typical:</strong> 2-5 days.</span></p></div></div><div class="step-card"><div class="num">2</div><div><h4>Opportunity</h4><p>Frame the commercial opportunity in the language of demand, not the language of solution. What is the customer hiring this product, brand, or channel to do?</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Opportunity brief with a sized hypothesis.</span> <span><strong>Typical:</strong> 3-7 days.</span></p></div></div><div class="step-card"><div class="num">3</div><div><h4>Competitive</h4><p>Map the alternatives the customer is comparing you against, including the alternative of doing nothing. Identify which alternatives have unfair advantages and which have exploitable weaknesses.</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Competitive landscape with positioning gaps.</span> <span><strong>Typical:</strong> 3-5 days.</span></p></div></div><div class="step-card"><div class="num">4</div><div><h4>Audience</h4><p>Define who the evidence has to come from. Customer segments, the trigger event that brings them into the market, the language they use to describe the problem.</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Target audience profile and recruiting plan.</span> <span><strong>Typical:</strong> 3-5 days.</span></p></div></div><div class="step-card"><div class="num">5</div><div><h4>Value Propositions</h4><p>Draft the value propositions that have to land for the bet to work. Test them against the audience, in their language, before investing in design or build.</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Value-prop test results with confidence levels per claim.</span> <span><strong>Typical:</strong> 5-10 days.</span></p></div></div><div class="step-card"><div class="num">6</div><div><h4>Marketing & Acquisition</h4><p>Test the channels, messages, and creative that will move the KPIs. Validate the path to customer, not just the product.</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Channel and message test results with cost-per-action benchmarks.</span> <span><strong>Typical:</strong> 7-14 days.</span></p></div></div><div class="step-card"><div class="num">7</div><div><h4>Framework</h4><p>Roll the evidence into a decision-ready memo. Every load-bearing assumption marked supported, invalidated, or inconclusive, with evidence attached and confidence level named. Recommendation explicit: kill, reshape, or commit.</p><p class="meta" style="margin-top:8px;font-size:13px;color:#8a8a8a;"><span><strong>Artifact:</strong> Two-page decision memo. Built for a board to read.</span> <span><strong>Typical:</strong> 2-3 days.</span></p></div></div></div>
   </div>
 </section>
 
