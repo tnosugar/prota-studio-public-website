@@ -24,13 +24,13 @@
     --teal: #487588;        /* was: emerald teal. Now: brand --prota-blue, the primary accent. */
     --teal-mid: #5c8a9e;    /* lighter prota-blue (mid). */
     --teal-light: #e8eef1;  /* very light prota-blue tint for soft section backgrounds. */
-    --gray-50: #f9f9f9;     /* brand --black-50 — light-section background. */
+    --gray-50: #f9f9f9;     /* brand --black-50, light-section background. */
     --gray-100: #f4f4f4;    /* brand --gray-1. */
-    --gray-200: #e5e5e5;    /* brand --black-100 — light borders. */
+    --gray-200: #e5e5e5;    /* brand --black-100, light borders. */
     --gray-300: #b3b3b3;    /* brand --black-300. */
-    --gray-600: #666;       /* brand --black-600 — body text. */
-    --body: #333;           /* brand --black-800 — strong body. */
-    --accent: #b39d63;      /* brand --gold — secondary accent (rare). */
+    --gray-600: #666;       /* brand --black-600, body text. */
+    --body: #333;           /* brand --black-800, strong body. */
+    --accent: #b39d63;      /* brand --gold, secondary accent (rare). */
     --white: #ffffff;
   }
   * { box-sizing: border-box; }
@@ -94,7 +94,7 @@
     max-width: 720px; margin: 0 0 36px;
   }
   .cta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
-  .btn-primary, .btn-secondary {
+  .btn-primary.btn-secondary {
     display: inline-block; padding: 14px 24px; border-radius: 8px;
     font-weight: 600; font-size: 16px; text-decoration: none;
     transition: all 0.2s ease; cursor: pointer; border: none; font-family: inherit;
@@ -231,13 +231,13 @@
     display: block; font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 6px;
   }
   .field label .required { color: var(--accent); }
-  .field input, .field select, .field textarea {
+  .field input.field select.field textarea {
     width: 100%; padding: 12px 14px; font-size: 15px;
     border: 1px solid var(--gray-300); border-radius: 8px;
     font-family: inherit; color: var(--body); background: var(--white);
     transition: border-color 0.2s;
   }
-  .field input:focus, .field select:focus, .field textarea:focus {
+  .field input:focus.field select:focus.field textarea:focus {
     outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(31, 56, 100, 0.1);
   }
   .field textarea { resize: vertical; min-height: 96px; }
@@ -278,7 +278,7 @@
 
   /* Mobile */
   @media (max-width: 768px) {
-    .two-col, .three-col, .tiers, .proof-grid { grid-template-columns: 1fr; }
+    .two-col.three-col.tiers.proof-grid { grid-template-columns: 1fr; }
     .field-row { grid-template-columns: 1fr; }
     .method-strip { flex-direction: column; align-items: flex-start; }
     .method-arrow { transform: rotate(90deg); }
@@ -478,7 +478,7 @@
     <h2 class="section">Questions we hear.</h2>
     <details>
       <summary>When should I pick Learning Sprint over Continuous Validation?</summary>
-      <p>Pick the Learning Sprint when you have one decision on the calendar — a fundraise, a roadmap call, a board commit, a launch — and you need evidence on a specific date. Pick Continuous Validation when your validation question keeps changing — innovation portfolios, scaleups in growth-strategy mode, founders iterating positioning weekly. Same methodology, different cadence. <a href="../continuous/">See Continuous Validation</a> for the always-on alternative.</p>
+      <p>Pick the Learning Sprint when you have one decision on the calendar, a fundraise, a roadmap call, a board commit, a launch, and you need evidence on a specific date. Pick Continuous Validation when your validation question keeps changing, innovation portfolios, scaleups in growth-strategy mode, founders iterating positioning weekly. Same methodology, different cadence. <a href="../continuous/">See Continuous Validation</a> for the always-on alternative.</p>
     </details>
     <details>
       <summary>Who actually runs the work?</summary>
