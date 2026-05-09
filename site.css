@@ -338,3 +338,55 @@ footer.site .copyright {
 .small { font-size: 14px; }
 .spacer-32 { height: 32px; }
 .spacer-48 { height: 48px; }
+
+/* ========================================
+   .specs — engagement / project metadata
+   Used on case-study and project sub-pages.
+   Replaces the awkward default table layout
+   with a clean two-column metadata grid.
+   ======================================== */
+table.specs {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  max-width: 760px;
+  margin: 24px 0 0;
+}
+table.specs tbody { display: contents; }
+table.specs tr {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid var(--black-100);
+}
+table.specs tr:last-child {
+  border-bottom: 1px solid var(--black-100);
+}
+table.specs th,
+table.specs td {
+  text-align: left;
+  padding: 0;
+  font-weight: normal;
+  vertical-align: baseline;
+}
+table.specs th {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--black-600);
+  font-weight: 600;
+}
+table.specs td {
+  font-size: 16px;
+  color: var(--black-900);
+  line-height: 1.5;
+}
+@media (max-width: 700px) {
+  table.specs tr {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
