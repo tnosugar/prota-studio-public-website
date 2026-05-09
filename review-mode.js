@@ -122,22 +122,108 @@ function assignAnchors(pageSlug) {
   const selector = TAGS.join(",") + "," + SPAN_SELECTORS.join(",") + ",.review-img-wrap";
 
   const counters = {};
+  // Cross-page counters for elements inside nav/footer that don't have
+  // a stable identifier (e.g. the social-icon list items). Same on every
+  // page so the same N maps to the same element.
+  const navCounters = {};
+  const footerCounters = {};
+
   document.body.querySelectorAll(selector).forEach((el) => {
     if (el.closest(SKIP_SELECTOR)) return;
     if (el.hasAttribute("data-comment-id")) return;
 
-    // For non-image elements, require some text content
     const isImgWrap = el.classList.contains("review-img-wrap");
     if (!isImgWrap) {
       const text = el.textContent.trim();
       if (text.length < 2) return;
     }
 
-    const key = isImgWrap ? "img" : el.tagName.toLowerCase();
-    counters[key] = (counters[key] || 0) + 1;
-    const id = `${pageSlug}-${key}-${counters[key]}`;
+    let id = computeStableId(el, navCounters, footerCounters);
+    if (!id) {
+      const key = isImgWrap ? "img" : el.tagName.toLowerCase();
+      counters[key] = (counters[key] || 0) + 1;
+      id = `${pageSlug}-${key}-${counters[key]}`;
+    }
     el.setAttribute("data-comment-id", id);
   });
+}
+
+// Stable cross-page anchor IDs for shared elements (nav, footer).
+// Returns null if the element is not in a shared region — caller falls
+// back to per-page sequence ID.
+function computeStableId(el, navCounters, footerCounters) {
+  if (el.closest("nav.top")) return computeNavId(el, navCounters);
+  if (el.closest("footer.site")) return computeFooterId(el, footerCounters);
+  return null;
+}
+
+function computeNavId(el, counters) {
+  const tag = el.tagName.toLowerCase();
+  // Logo link <a class="logo">
+  if (tag === "a" && el.classList.contains("logo")) return "nav-logo";
+  // Logo image (wrapped in .review-img-wrap)
+  if (el.classList.contains("review-img-wrap") && el.closest(".logo")) return "nav-logo-img";
+  // CTA button: <a class="cta">
+  if (tag === "a" && el.classList.contains("cta")) {
+    return `nav-cta-${slugifyHref(el.getAttribute("href"))}`;
+  }
+  // Regular nav link <a>
+  if (tag === "a") {
+    return `nav-link-${slugifyHref(el.getAttribute("href"))}`;
+  }
+  // <li> wrapping a link — anchor by the link's href
+  if (tag === "li") {
+    const a = el.querySelector("a");
+    if (a) return `nav-item-${slugifyHref(a.getAttribute("href"))}`;
+  }
+  // Fallback — sequence within nav by tag (consistent across pages
+  // because the nav HTML is identical)
+  counters[tag] = (counters[tag] || 0) + 1;
+  return `nav-${tag}-${counters[tag]}`;
+}
+
+function computeFooterId(el, counters) {
+  const tag = el.tagName.toLowerCase();
+  // Tagline paragraph
+  if (tag === "p" && el.classList.contains("tagline")) return "footer-tagline";
+  // Copyright block
+  if (el.classList.contains("copyright")) return "footer-copyright";
+  // Headings — slugify the text
+  if (["h3", "h4"].includes(tag)) {
+    return `footer-h-${slugifyText(el.textContent)}`;
+  }
+  // Footer links
+  if (tag === "a") {
+    return `footer-link-${slugifyHref(el.getAttribute("href"))}`;
+  }
+  // List items wrapping a link
+  if (tag === "li") {
+    const a = el.querySelector("a");
+    if (a) return `footer-item-${slugifyHref(a.getAttribute("href"))}`;
+  }
+  // Fallback — sequence within footer by tag
+  counters[tag] = (counters[tag] || 0) + 1;
+  return `footer-${tag}-${counters[tag]}`;
+}
+
+function slugifyHref(href) {
+  if (!href) return "none";
+  // Strip protocol, leading/trailing slashes, replace non-word chars
+  return href
+    .replace(/^https?:\/\//, "")
+    .replace(/^\/+|\/+$/g, "")
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase() || "home";
+}
+
+function slugifyText(text) {
+  return (text || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "untitled";
 }
 
 function wireAnchors() {
