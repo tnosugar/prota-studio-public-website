@@ -359,6 +359,7 @@ function renderCommentList() {
   listEl.innerHTML = filtered.map((c) => {
     const status = c.status || "open";
     const when = c.timestamp ? new Date(c.timestamp).toLocaleString() : "";
+    const actions = renderActions(c.id, status);
     return `
       <div class="review-comment ${status}" data-comment="${c.id}" data-anchor="${escapeHtml(c.anchor || "")}">
         <div class="anchor">${escapeHtml(c.anchor || "(no anchor)")}</div>
@@ -368,18 +369,46 @@ function renderCommentList() {
           <span class="status ${status}">${status}</span>
           <span>${when}</span>
         </div>
+        <div class="actions">${actions}</div>
       </div>`;
   }).join("");
 
+  // Click on the row body (anywhere except action buttons) scrolls to the anchor.
   listEl.querySelectorAll(".review-comment").forEach((row) => {
-    row.addEventListener("click", () => {
+    row.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
       const anchor = row.getAttribute("data-anchor");
       const target = document.querySelector(`[data-comment-id="${cssEscape(anchor)}"]`);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+
+  // Action buttons: apply / dismiss / reopen.
+  listEl.querySelectorAll("[data-action]").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const action = btn.getAttribute("data-action");
+      const id = btn.getAttribute("data-comment");
+      btn.disabled = true;
+      try {
+        await setStatus(id, action);
+        toast(action === "open" ? "Reopened." : action.charAt(0).toUpperCase() + action.slice(1) + ".");
+      } catch (err) {
+        console.error("[review-mode] status update failed:", err);
+        toast("Update failed: " + err.message);
+        btn.disabled = false;
       }
     });
   });
+}
+
+function renderActions(id, status) {
+  const apply = `<button data-comment="${id}" data-action="applied" class="apply-btn" title="Mark as applied">&#10004; Applied</button>`;
+  const dismiss = `<button data-comment="${id}" data-action="dismissed" class="dismiss-btn" title="Dismiss">&#10005; Dismiss</button>`;
+  const reopen = `<button data-comment="${id}" data-action="open" class="reopen-btn" title="Reopen">&#8634; Reopen</button>`;
+  if (status === "applied") return reopen;
+  if (status === "dismissed") return reopen;
+  return apply + dismiss;
 }
 
 // =================================================================

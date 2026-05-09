@@ -385,3 +385,45 @@
 }
 @keyframes toastIn { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 @keyframes toastOut { to { transform: translate(-50%, 20px); opacity: 0; } }
+
+/* Action buttons inside each comment row */
+.review-comment .actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+}
+.review-comment .actions button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 5px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.review-comment .actions button:hover {
+  border-color: #1F3864;
+  color: #1F3864;
+}
+.review-comment .actions button.apply-btn:hover {
+  background: #d1fae5;
+  border-color: #10b981;
+  color: #065f46;
+}
+.review-comment .actions button.dismiss-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
+}
+.review-comment .actions button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.review-comment.applied .actions button,
+.review-comment.dismissed .actions button {
+  background: #f8fafc;
+}
