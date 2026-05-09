@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Getcha Now / Tip Now, Citi Ventures D10X — Prota Studios</title>
+<meta name="description" content="A Citi D10X concept for stranger-to-stranger tipping (think buskers, valets, baristas) when neither party carries cash. Phase 1 validated four core assumptions " />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/site.css" />
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/assets/prota-favicon-small.png" />
+<link rel="apple-touch-icon" href="/brand/assets/prota-brandmark-favicon-large.png" />
+<meta property="og:title" content="Getcha Now / Tip Now, Citi Ventures D10X — Prota Studios" />
+<meta property="og:description" content="A Citi D10X concept for stranger-to-stranger tipping (think buskers, valets, baristas) when neither party carries cash. Phase 1 validated four core assumptions " />
+<meta property="og:image" content="https://protastudios.ai/brand/assets/og/work-citi-ventures.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:alt" content="A Citi D10X concept for stranger-to-stranger tipping (think buskers, valets, baristas) when neither party carries cash. Phase 1 validated four core assumptions " />
+<meta property="og:url" content="https://protastudios.ai/work/citi-ventures/getcha-now-tip-now/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Getcha Now / Tip Now, Citi Ventures D10X — Prota Studios" />
+<meta name="twitter:description" content="A Citi D10X concept for stranger-to-stranger tipping (think buskers, valets, baristas) when neither party carries cash. Phase 1 validated four core assumptions " />
+<meta name="twitter:image" content="https://protastudios.ai/brand/assets/og/work-citi-ventures.png" />
+</head>
+<body>
+<nav class="top">
+  <div class="container">
+    <a href="/" class="logo"><img src="/brand/assets/Prota_Studios_logo.png" alt="Prota Studios" /></a>
+    <ul>
+      <li><a href="/how-it-works/">How it works</a></li>
+      <li><a href="/learning-sprint/">Learning Sprint</a></li>
+      <li><a href="/continuous/">Continuous</a></li>
+      <li><a href="/work/">Work</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/contact/" class="cta">Book a call</a></li>
+    </ul>
+  </div>
+</nav>
+<style>
+  .breadcrumb { font-size: 13px; color: #6e6e73; margin-bottom: 16px; }
+  .breadcrumb a { color: var(--prota-blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* Hero (matches home page two-column pattern) */
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .hero-grid .hero-image { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
+  }
+
+  /* Client overview project tiles */
+  .theme-section { margin-top: 56px; }
+  .theme-section h3 { font-size: 22px; margin: 0 0 8px; color: var(--prota-blue); }
+  .theme-section .lede { margin: 0 0 24px; color: #4a4a4a; font-size: 16px; max-width: 760px; }
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .project-tile { display: block; padding: 18px 20px; border: 1px solid #e5e7eb; border-radius: 10px; background: white; text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
+  .project-tile:hover { transform: translateY(-1px); border-color: var(--prota-blue); box-shadow: 0 6px 18px rgba(31, 56, 100, 0.08); }
+  .project-tile h4 { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--prota-blue); }
+  .project-tile p { margin: 0 0 10px; font-size: 14px; color: #4a4a4a; line-height: 1.5; }
+  .project-tile .meta { display: flex; justify-content: space-between; font-size: 12px; color: #8a8a8a; border-top: 1px solid #f0f0f0; padding-top: 8px; margin-top: 10px; }
+  .project-tile .disposition { font-weight: 500; color: #15803d; }
+
+  /* Sprint cards (used on flagship sub-pages) */
+  .sprint-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+  .sprint-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 22px 26px; background: white; display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: start; }
+  .sprint-card .num { font-size: 36px; font-weight: 700; color: var(--prota-blue); line-height: 1; }
+  .sprint-card .num-sub { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  .sprint-card h4 { margin: 0 0 8px; font-size: 17px; }
+  .sprint-card p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: #4a4a4a; }
+  @media (max-width: 600px) { .sprint-card { grid-template-columns: 1fr; gap: 8px; } }
+</style>
+
+<section class="block">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="text">
+        <div class="breadcrumb"><a href="/work/">Work</a> &rsaquo; <a href="/work/citi-ventures/">Citi Ventures</a> &rsaquo; Getcha Now / Tip Now</div>
+        <span class="eyebrow">Payments · P2P · Hardware-software validation</span>
+        <h1>Tipping for the cashless economy, validated then pivoted.</h1>
+        <p class="lede">A Citi D10X concept for stranger-to-stranger tipping (think buskers, valets, baristas) when neither party carries cash. Phase 1 validated four core assumptions on the QR badge; Phase 2 pivoted to enterprise go-to-market.</p>
+        <div class="cta-row">
+          <a href="/contact/" class="btn-primary">Run something like this with us</a>
+          <a href="/work/citi-ventures/" class="btn-secondary">Back to Citi Ventures</a>
+        </div>
+      </div>
+      <div class="hero-image"><img src="/brand/assets/work/citi.webp" alt="Citi Ventures D10X — Getcha Now / Tip Now sub-project, validation work by Prota Studios" loading="eager" /></div>
+    </div>
+  </div>
+</section>
+<section class="block alt">
+  <div class="container">
+    <h2 class="section">Project at a glance.</h2>
+    <table class="specs">
+      <tr><th>Sub-project</th><td>Getcha Now / Tip Now</td></tr>
+      <tr><th>Timeline</th><td>May 2018 to March 2019</td></tr>
+      <tr><th>Phases</th><td>Phase 1 (concept validation) → Phase 2 (enterprise pivot) → rebrand</td></tr>
+      <tr><th>Outcome</th><td>Phase 1 validated four core assumptions; Phase 2 pivoted to enterprise GTM</td></tr>
+    </table>
+  </div>
+</section>
+<section class="block">
+  <div class="container-narrow">
+    <h2 class="section">Challenge.</h2>
+    <blockquote>The concept tested whether strangers would transact through their phones in a low-friction tipping moment. Five candidate mechanics on the table: tap-to-tap NFC, AirDrop-to-picture, QR badge, business card, app-only. The decision was which mechanic to build, against what audience, with what value proposition.</blockquote>
+
+    <h2 class="section">Approach.</h2>
+    <ul>
+      <li><strong>Two-axis concept rejection grid</strong>: social acceptability and tech feasibility. Used as a kill-screen before user-research budget got spent.</li>
+      <li><strong>Phase 1 user interviews</strong> on five mechanics. NFC failed both axes; AirDrop passed social, failed tech for cross-platform reasons; QR badge passed both.</li>
+      <li><strong>Phase 2 pivoted to enterprise GTM</strong> when the consumer-side validation surfaced that the most reliable demand was for venue-mediated tipping, not stranger-to-stranger.</li>
+      <li><strong>Q1 2019 rebrand</strong> closed the engagement; downstream outcome held inside Citi.</li>
+    </ul>
+  </div>
+</section>
+<section class="block">
+  <div class="container-narrow">
+    <h2 class="section">Outcome.</h2>
+    <ul>
+      <li><strong>Four core assumptions validated</strong> in Phase 1 around audience, mechanic, and value proposition.</li>
+      <li><strong>Two mechanics killed cleanly</strong> on the rejection grid before user-research budget went into them.</li>
+      <li><strong>Pivot to enterprise GTM</strong> based on Phase 2 demand-pattern reads.</li>
+    </ul>
+
+    <h2 class="section">Methodology lessons.</h2>
+    <ul>
+      <li><strong>Two-axis concept rejection (social acceptability and tech feasibility)</strong> for any payments product where strangers transact through their phones.</li>
+      <li><strong>Tech-feasibility before user-research</strong> for hardware-dependent concepts. Run a one-page feasibility memo from the client engineering team before user-research budget gets spent.</li>
+    </ul>
+  </div>
+</section>
+<section class="block dark">
+  <div class="container-narrow center">
+    <h2>Have a similar question to put in front of customers?</h2>
+    <p class="lede" style="margin: 0 auto 28px;">Tell us what you are deciding and we will tell you what the cadence should look like.</p>
+    <a href="/contact/" class="btn-primary">Book a 30-minute call</a>
+  </div>
+</section>
+<footer class="site">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Prota Studios</h4>
+        <p class="tagline">Continuous validation for AI-era teams. Driven by heart and data.</p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/how-it-works/">How it works</a></li>
+          <li><a href="/learning-sprint/">Learning Sprint</a></li>
+          <li><a href="/continuous/">Continuous</a></li>
+          <li><a href="/work/">Work</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="https://www.linkedin.com/company/protaventures/">LinkedIn</a></li>
+          <li><a href="https://x.com/ProtaVentures">Twitter / X</a></li>
+          <li><a href="https://www.protaventures.com/">Prota Ventures</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">2026 Prota Studios. All Rights Reserved.</div>
+  </div>
+</footer>
+
+<script src="/review-bootstrap.js" defer></script>
+</body>
+</html>

@@ -3,30 +3,29 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Citi Ventures | Continuous Validation, 9 years, 100+ experiments, Prota Studios</title>
-<meta name="description" content="Multi-year continuous-validation partnership inside Citi Ventures' D10X innovation program. 100+ experiments across the bet portfolio. Comparable signals, defensible cadence, kill-or-commit decisions." />
+<title>Citi Ventures, Nine years inside the D10X innovation program — Prota Studios</title>
+<meta name="description" content="A multi-year continuous-validation partnership with Citi Ventures' D10X program. 18 sub-projects with named outcomes across nine years." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/site.css" />
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/assets/prota-favicon-small.png" />
 <link rel="apple-touch-icon" href="/brand/assets/prota-brandmark-favicon-large.png" />
-<meta property="og:title" content="Citi Ventures — Nine years inside Citi's innovation program" />
-<meta property="og:description" content="100-plus product experiments. Comparable-signals framework across the bet portfolio." />
+<meta property="og:title" content="Citi Ventures, Nine years inside the D10X innovation program — Prota Studios" />
+<meta property="og:description" content="A multi-year continuous-validation partnership with Citi Ventures' D10X program. 18 sub-projects with named outcomes across nine years." />
 <meta property="og:image" content="https://protastudios.ai/brand/assets/og/work-citi-ventures.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:type" content="image/png" />
-<meta property="og:image:alt" content="100-plus product experiments. Comparable-signals framework across the bet portfolio." />
+<meta property="og:image:alt" content="A multi-year continuous-validation partnership with Citi Ventures' D10X program. 18 sub-projects with named outcomes across nine years." />
 <meta property="og:url" content="https://protastudios.ai/work/citi-ventures/" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Citi Ventures — Nine years inside Citi's innovation program" />
-<meta name="twitter:description" content="100-plus product experiments. Comparable-signals framework across the bet portfolio." />
+<meta name="twitter:title" content="Citi Ventures, Nine years inside the D10X innovation program — Prota Studios" />
+<meta name="twitter:description" content="A multi-year continuous-validation partnership with Citi Ventures' D10X program. 18 sub-projects with named outcomes across nine years." />
 <meta name="twitter:image" content="https://protastudios.ai/brand/assets/og/work-citi-ventures.png" />
 </head>
 <body>
-
 <nav class="top">
   <div class="container">
     <a href="/" class="logo"><img src="/brand/assets/Prota_Studios_logo.png" alt="Prota Studios" /></a>
@@ -40,120 +39,192 @@
     </ul>
   </div>
 </nav>
+<style>
+  .breadcrumb { font-size: 13px; color: #6e6e73; margin-bottom: 16px; }
+  .breadcrumb a { color: var(--prota-blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* Hero (matches home page two-column pattern) */
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .hero-grid .hero-image { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--alt, #f3f5f9); }
+  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
+  }
+
+  /* Client overview project tiles */
+  .theme-section { margin-top: 56px; }
+  .theme-section h3 { font-size: 22px; margin: 0 0 8px; color: var(--prota-blue); }
+  .theme-section .lede { margin: 0 0 24px; color: #4a4a4a; font-size: 16px; max-width: 760px; }
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .project-tile { display: block; padding: 18px 20px; border: 1px solid #e5e7eb; border-radius: 10px; background: white; text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
+  .project-tile:hover { transform: translateY(-1px); border-color: var(--prota-blue); box-shadow: 0 6px 18px rgba(31, 56, 100, 0.08); }
+  .project-tile h4 { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--prota-blue); }
+  .project-tile p { margin: 0 0 10px; font-size: 14px; color: #4a4a4a; line-height: 1.5; }
+  .project-tile .meta { display: flex; justify-content: space-between; font-size: 12px; color: #8a8a8a; border-top: 1px solid #f0f0f0; padding-top: 8px; margin-top: 10px; }
+  .project-tile .disposition { font-weight: 500; color: #15803d; }
+
+  /* Sprint cards (used on flagship sub-pages) */
+  .sprint-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+  .sprint-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 22px 26px; background: white; display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: start; }
+  .sprint-card .num { font-size: 36px; font-weight: 700; color: var(--prota-blue); line-height: 1; }
+  .sprint-card .num-sub { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  .sprint-card h4 { margin: 0 0 8px; font-size: 17px; }
+  .sprint-card p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: #4a4a4a; }
+  @media (max-width: 600px) { .sprint-card { grid-template-columns: 1fr; gap: 8px; } }
+</style>
 
 <section class="block">
-  <div class="container-narrow">
-    <span class="eyebrow">Continuous Validation · Financial Services · Enterprise</span>
-    <h1>Nine years inside Citi's innovation program.</h1>
-    <p class="lede">A multi-year continuous-validation partnership with Citi Ventures' D10X program. 100-plus experiments across the bet portfolio. Comparable signals across teams, executive turnover, and changes in strategy.</p>
-    <div class="cta-row">
-      <a href="/contact/" class="btn-primary">Run something like this with us</a>
-      <a href="/work/" class="btn-secondary">All case studies</a>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="text">
+        <div class="breadcrumb"><a href="/work/">Work</a> &rsaquo; Citi Ventures</div>
+        <span class="eyebrow">Continuous Validation · Financial services · Enterprise</span>
+        <h1>Nine years inside Citi's innovation program.</h1>
+        <p class="lede">A multi-year continuous-validation partnership with Citi Ventures' D10X program. Eighteen sub-projects with named outcomes across nine years and 100-plus experiments. Comparable signals across teams, executive turnover, and changes in strategy.</p>
+        <div class="cta-row">
+          <a href="/contact/" class="btn-primary">Run something like this with us</a>
+        </div>
+      </div>
+      <div class="hero-image"><img src="/brand/assets/work/citi.webp" alt="Citi Ventures D10X innovation program tile, the case study where Prota Studios ran 100-plus product experiments across nine years of continuous validation" loading="eager" /></div>
     </div>
   </div>
 </section>
 <section class="block alt">
   <div class="container">
-    <img src="https://cdn.prod.website-files.com/6714145300c4bdab5926bddf/673f7933453a48928abf10f6_Citi-Projects.webp" alt="Mobile-finance product mockup from Citi Ventures' D10X innovation portfolio, one of 100-plus product experiments validated by Prota Studios" style="width:100%; max-width:1080px; margin:0 auto; display:block; border-radius:8px;" loading="lazy" />
-  </div>
-</section>
-
-<section class="block alt">
-  <div class="container">
-    <table class="compare">
-      <thead>
-        <tr><th>Engagement</th><th>Industry</th><th>Company size</th><th>Services</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Continuous Validation partner</td>
-          <td>Financial services</td>
-          <td>Enterprise (Fortune-100)</td>
-          <td>Demand testing, qualitative research, prototype build, post-launch optimization</td>
-        </tr>
-      </tbody>
+    <h2 class="section">Engagement at a glance.</h2>
+    <table class="specs">
+      <tr><th>Engagement</th><td>Continuous Validation partner</td></tr>
+      <tr><th>Industry</th><td>Financial services</td></tr>
+      <tr><th>Company size</th><td>Enterprise (Fortune-100)</td></tr>
+      <tr><th>Services</th><td>Demand testing, qualitative research, prototype build, post-launch optimization</td></tr>
+      <tr><th>Timeline</th><td>Q1 2018 onward; LATAM extension into 2022</td></tr>
+      <tr><th>Sub-projects with named outcomes</th><td>18</td></tr>
     </table>
   </div>
 </section>
-
 <section class="block">
   <div class="container-narrow">
-    <h2>Challenge</h2>
-    <p>Citi Ventures' D10X program runs the bank's intrapreneur-led venture pipeline, Citi employees pitching new products, advancing through Seed-1, Seed-2, and Seed-3 Growth Boards before any build commits. The program needed a validation partner who could give every concept the same treatment: comparable evidence, comparable cadence, comparable kill-or-commit standard.</p>
+    <h2 class="section">Challenge.</h2>
+    <blockquote>Citi Ventures' D10X program runs the bank's intrapreneur-led venture pipeline. Citi employees pitch new products and advance through Seed-1, Seed-2, and Seed-3 Growth Boards before any build commits. The program needed a validation partner who could give every concept the same treatment: comparable evidence, comparable cadence, comparable kill-or-commit standard, sustained across a portfolio of bets and across years of executive turnover.</blockquote>
 
-    <h2>Solution</h2>
+    <h2 class="section">What we built across the partnership.</h2>
     <ul>
-      <li>28 distinct sub-projects across the partnership, wealth, lending, family banking, earned-wage access, ESG investing, conversational AI, identity and payments, post-launch UX optimization, multi-market LATAM tests.</li>
-      <li>Three validation cadences run in parallel: pre-build demand tests on unbranded domains; qualitative concept-research rounds; post-launch UX optimization with eight-sprint experiment registers.</li>
-      <li>Q1 2018 six-team parallel batch, six concepts on a synchronized seven-week timeline targeting the same Growth Board date. The canonical demand-test scaffold every later sub-project filled out.</li>
-      <li>A $1M-budget multi-work-order SOW from 2020, separate work orders for demand tests and general validation services, with a four-tier retainer rate card and per-recruit / per-interview qualitative costs codified.</li>
+      <li>Three validation cadences run in parallel: pre-build demand tests on unbranded domains, qualitative concept-research rounds, and post-launch UX optimization with multi-sprint experiment registers.</li>
+      <li>The Q1 2018 six-team parallel batch (six concepts on a synchronized seven-week timeline targeting the same Growth Board date) became the canonical demand-test scaffold every later sub-project filled out.</li>
+      <li>A $1M-budget multi-work-order SOW from 2020, with separate work orders for demand tests and general validation services.</li>
+      <li>An institutional memory function across Citi sponsor cohorts: cross-engagement memory longer than any single internal sponsor's tenure.</li>
     </ul>
 
-    <h2>Results</h2>
+    <h2 class="section">Headline outcomes.</h2>
     <ul>
-      <li><strong>9-year partnership</strong> sustained across multiple sponsor cohorts and program-shape evolutions.</li>
-      <li><strong>100-plus experiments</strong> producing comparable kill-or-commit calls inside D10X.</li>
-      <li><strong>Wealth Attacker</strong> sub-segmentation became Citi's September 2020 Mid-Tier Segmentation Approach.</li>
-      <li><strong>Lending</strong> persona reframe (Transactor to Often Revolver) reshaped the FlexPay-to-SpendFriend product hypothesis on the strength of the demand-test data.</li>
-      <li><strong>Sum-It MVP</strong>, the rare validation-to-build case: validated, built, shipped to Google Play, ran live for three months acquiring real users; reduced eventual Citi-branded design effort by roughly 50% and tech effort by roughly 15%.</li>
-      <li><strong>Workplace Banking</strong> pivoted from a BAU offer to "Banking for Working Families" on the strength of unprompted demand-test signal.</li>
+      <li><strong>Wealth Attacker</strong> sub-segmentation became Citi's September 2020 mid-tier wealth strategy.</li>
+      <li><strong>Lending</strong> persona reframe (Transactor → Often Revolver) reshaped the FlexPay-to-SpendFriend product hypothesis.</li>
+      <li><strong>Sum-It MVP</strong> validated, built, shipped to Google Play; design effort cut 50%, tech 15%.</li>
+      <li><strong>Workplace Banking</strong> pivoted from a BAU offer to "Banking for Working Families" on the demand-test signal.</li>
     </ul>
   </div>
 </section>
-
 <section class="block alt">
   <div class="container">
-    <h2 class="section center">Selected experiments.</h2>
-    <div class="cards cols-2">
-      <div class="card">
-        <span class="eyebrow">Wealth strategy</span>
-        <h3>Wealth Attacker, Mid-tier wealth strategy</h3>
-        <p>Five sequential narrowing sprints (April-October 2020). Switched from socio-economic to life-events targeting in Sprint 2 (Divorce, Family Liquidity, Business Liquidity). Sub-segmentation landed on four target segments, Corporate Executives, Doctors and Dentists, Entrepreneurs, Professional Athletes, and became Citi's mid-tier wealth strategy.</p>
-      </div>
-      <div class="card">
-        <span class="eyebrow">Persona reframe</span>
-        <h3>Lending, FlexPay to SpendFriend</h3>
-        <p>Persona reframe driven by the demand-test data. Original product hypothesis (Transactors discounting to revolve a single purchase) tested weak. Often Revolvers tested strong. Balance Bifurcation surfaced as the precondition design change. The reshape went into Citi's lending roadmap.</p>
-      </div>
-      <div class="card">
-        <span class="eyebrow">Validation to build</span>
-        <h3>Sum-It MVP, Validation to build</h3>
-        <p>Two demand tests greenlit a build. We built and shipped a publicly-distributed unbranded Android app under sum-it.co in April 2019. Three months in market, 134 real users acquired at blended $209 CAC across $28K of spend. Closed cleanly. Reduced design effort for the eventual Citi-branded version by roughly 50%, tech effort by roughly 15%.</p>
-      </div>
-      <div class="card">
-        <span class="eyebrow">Comparative tracks</span>
-        <h3>Workplace Banking, BAU vs D10X</h3>
-        <p>Comparative validation: BAU offer and D10X reframe ran on the same audience and channel mix. The reframe outperformed; the political case for change was inarguable. Sprint 2 pivoted entirely to "Banking for Working Families."</p>
-      </div>
-      <div class="card">
-        <span class="eyebrow">ESG investing</span>
-        <h3>Workplace Banking, Impact Banking track</h3>
-        <p>Two-year-later rediscovery of the values-led investing thesis surfaced earlier in Impact-Investful (2018). D2C digital bank with ESG-aligned deposits, ethical-footprint tracker, recycled-plastic card, tested under a fresh unbranded domain. Same strategic thesis, sharper surface.</p>
-      </div>
-      <div class="card">
-        <span class="eyebrow">Post-launch UX</span>
-        <h3>Out Of The Red, Post-launch UX optimization</h3>
-        <p>Heuristic content-and-flow audit on a shipped Citi product. Onboarding density, alerts, account linkage, and end-to-end-flow integration ran as a forward backlog of next experiments. The cleanest example in the archive of post-launch retainer-style validation work.</p>
-      </div>
-    </div>
+    <h2 class="section">All work for Citi.</h2>
+    <p class="lede" style="max-width: 760px; margin: -8px 0 32px;">Eighteen sub-projects with named outcomes, organized by domain. Each tile links to the project sub-page.</p>
+    <div class="theme-section"><h3>Wealth & Investment</h3><p class="lede">Four sub-projects testing wealth management, women-and-investing, and ESG-aligned banking.</p><div class="project-grid">        <a href="wealth-attacker/" class="project-tile">
+          <h4>Wealth Attacker / Wealthena</h4>
+          <p>Five sequential narrowing sprints validating mid-tier wealth management. Sub-segmentation became Citi's September 2020 mid-tier wealth strategy.</p>
+          <div class="meta"><span>Mar–Oct 2020</span><span class="disposition">Validated · adopted</span></div>
+        </a>        <a href="otium/" class="project-tile">
+          <h4>Otium</h4>
+          <p>Women-and-investing app with a FOMO and social wedge. Three-sprint CPL optimization brought cost per lead from $82 to $45.</p>
+          <div class="meta"><span>May–Jul 2018</span><span class="disposition">Validated · CPL halved</span></div>
+        </a>        <a href="moneyhive/" class="project-tile">
+          <h4>MoneyHive</h4>
+          <p>Women-and-investing community with credentialed expert advice. 37 conversions at $62.78 CPL across $2,500 ad spend on a unbranded test domain.</p>
+          <div class="meta"><span>Sep 2017–Apr 2018</span><span class="disposition">Demand validated</span></div>
+        </a>        <a href="impact-banking/" class="project-tile">
+          <h4>Impact Banking</h4>
+          <p>D2C digital bank with ESG-aligned deposits, ethical-footprint tracker, and recycled-plastic card. Sharper surface on the values-led thesis.</p>
+          <div class="meta"><span>2020</span><span class="disposition">Validated as track</span></div>
+        </a>      </div></div>
+    <div class="theme-section"><h3>Lending & Credit</h3><p class="lede">Three sub-projects testing installment lending, post-launch debt-management UX, and student-loan acceleration.</p><div class="project-grid">        <a href="lending/" class="project-tile">
+          <h4>Lending (FlexPay → SpendFriend)</h4>
+          <p>Demand test plus design tracks repackaging FlexPay for Revolvers. Persona reframe reshaped the lending roadmap.</p>
+          <div class="meta"><span>Jul–Nov 2020</span><span class="disposition">Validated · reshaped</span></div>
+        </a>        <a href="sum-it-mvp/" class="project-tile">
+          <h4>Sum-It MVP</h4>
+          <p>Student-loan roundup app. Validated, built, shipped to Google Play; ran live for three months; design effort cut 50%, tech 15%.</p>
+          <div class="meta"><span>Oct 2018–Aug 2019</span><span class="disposition">Validated · built · shipped</span></div>
+        </a>        <a href="out-of-the-red/" class="project-tile">
+          <h4>Out of the Red</h4>
+          <p>Post-launch debt-snowball UX optimization on a shipped Citi product. Onboarding density, alerts, account linkage as a forward experiment backlog.</p>
+          <div class="meta"><span>Jul–Oct 2019</span><span class="disposition">Backlog scoped</span></div>
+        </a>      </div></div>
+    <div class="theme-section"><h3>Family Banking & Life Stages</h3><p class="lede">Two sub-projects testing employer-channel benefits and family-and-friends college funding.</p><div class="project-grid">        <a href="workplace-banking/" class="project-tile">
+          <h4>Workplace Banking</h4>
+          <p>Employer-channel benefits with a parallel ESG track. Pivoted from BAU offer to "Banking for Working Families" on the demand-test signal.</p>
+          <div class="meta"><span>Apr–Sep 2020</span><span class="disposition">Validated · pivoted</span></div>
+        </a>        <a href="egg-hatch-seedling/" class="project-tile">
+          <h4>Egg / Hatch / Seedling</h4>
+          <p>Family-and-friends college-funding platform. Parent demand validated, funder demand soft. 32 captures.</p>
+          <div class="meta"><span>Oct 2017–Feb 2018</span><span class="disposition">Reshape recommended</span></div>
+        </a>      </div></div>
+    <div class="theme-section"><h3>Earned-Wage Access</h3><p class="lede">One sub-project testing earned-wage access for paycheck-to-paycheck workers.</p><div class="project-grid">        <a href="iearn-daily-mypay/" class="project-tile">
+          <h4>iEarn / Daily / MyPay</h4>
+          <p>Earned-wage access concept. Demand validated through 567 form-fills. Pricing split tested between $5.95 per month and $4 per use.</p>
+          <div class="meta"><span>Jul–Dec 2018</span><span class="disposition">Demand validated</span></div>
+        </a>      </div></div>
+    <div class="theme-section"><h3>Identity, Payments & Servicing</h3><p class="lede">Five sub-projects testing identity-as-payment, P2P tipping, trusted-partner monitoring, B2B fintech, and emergency rescue.</p><div class="project-grid">        <a href="groundswell/" class="project-tile">
+          <h4>Groundswell</h4>
+          <p>Citi-as-identity ecommerce single sign-on. Reshape recommended around identity and card management, not speed.</p>
+          <div class="meta"><span>May–Jun 2018</span><span class="disposition">Reshape recommended</span></div>
+        </a>        <a href="getcha-now-tip-now/" class="project-tile">
+          <h4>Getcha Now / Tip Now</h4>
+          <p>Baseless-tipping P2P payments using a QR badge. Phase 1 validated four core assumptions; Phase 2 pivoted to enterprise GTM.</p>
+          <div class="meta"><span>May 2018–Mar 2019</span><span class="disposition">Validated · pivoted</span></div>
+        </a>        <a href="designate/" class="project-tile">
+          <h4>Designate</h4>
+          <p>Boomer trusted-partner financial monitoring. Four sprints with progressive value-prop narrowing. Final-sprint CPL of $26.</p>
+          <div class="meta"><span>Aug 2018–Jan 2019</span><span class="disposition">Validated · continued</span></div>
+        </a>        <a href="indie/" class="project-tile">
+          <h4>Indie</h4>
+          <p>Sole-proprietor pre-accounting with card attach. Primary track validated weakly, an honest read that reshaped the product roadmap.</p>
+          <div class="meta"><span>Mar–Apr 2018</span><span class="disposition">Validated weakly</span></div>
+        </a>        <a href="float/" class="project-tile">
+          <h4>Float</h4>
+          <p>Rescue-prototype scope: one landing page, one core experience, one decision-grade form-fill. The original kernel of the L1 Diagnostic tier.</p>
+          <div class="meta"><span>2019</span><span class="disposition">Methodology pattern</span></div>
+        </a>      </div></div>
+    <div class="theme-section"><h3>B2B Workflow Validation</h3><p class="lede">One sub-project testing multi-party insurance claims orchestration.</p><div class="project-grid">        <a href="arena/" class="project-tile">
+          <h4>Arena</h4>
+          <p>Multi-party insurance claims orchestration. Eight expert interviews and storyboards produced a complete swim-lane map. Liberty Mutual and storm-restoration vendors as design partners.</p>
+          <div class="meta"><span>Aug–Sep 2019</span><span class="disposition">Workflow validated</span></div>
+        </a>      </div></div>
+    <div class="theme-section"><h3>Multi-Market LATAM</h3><p class="lede">Two sub-projects extending the partnership to Citibanamex Mexico and Peru.</p><div class="project-grid">        <a href="afore/" class="project-tile">
+          <h4>Citibanamex Afore</h4>
+          <p>Retirement-savings repositioning for Citibanamex. Six-row assumption framework; FinFutura final report delivered May 2022.</p>
+          <div class="meta"><span>Apr–May 2022</span><span class="disposition">Final report</span></div>
+        </a>        <a href="rentarys/" class="project-tile">
+          <h4>Rentarys</h4>
+          <p>Two-market parallel smoke test (Peru → Mexico, four months apart). Synthesis-translate-test-compare loop. Reusable multi-market template.</p>
+          <div class="meta"><span>2021–2022</span><span class="disposition">Multi-market template</span></div>
+        </a>      </div></div>
   </div>
 </section>
-
 <section class="block">
   <div class="container-narrow">
-    <h2>What this engagement says about validation at scale.</h2>
-    <p>Multi-year MSAs survive executive turnover, and the consultant's job is to be the institutional memory. The Wealth Attacker sub-segmentation, the Lending Often Revolver reframe, the Workplace Banking family pivot, and the recurring family-banking thesis all required someone holding the cross-engagement memory longer than any single internal sponsor's tenure. That role is the consultant's defensible value in long-MSA enterprise relationships.</p>
+    <h2 class="section">What this engagement says about validation at scale.</h2>
+    <blockquote>Multi-year MSAs survive executive turnover, and the consultant's job is to be the institutional memory. The Wealth Attacker sub-segmentation, the Lending persona reframe, the Workplace Banking family pivot, and the recurring family-banking thesis all required someone holding cross-engagement memory longer than any single internal sponsor's tenure. That role is the consultant's defensible value in long-MSA enterprise relationships.</blockquote>
   </div>
 </section>
 
 <section class="block dark">
   <div class="container-narrow center">
     <h2>Want this kind of operating engine for your innovation portfolio?</h2>
-    <p class="lede" style="margin: 0 auto 28px;">Continuous Validation is the retainer-style version of this work, always-on validation across products and communications as your roadmap evolves. Tell us what you're deciding and we'll tell you what the cadence should look like.</p>
+    <p class="lede" style="margin: 0 auto 28px;">Continuous Validation is the retainer-style version of this work. Tell us what you are deciding and we will tell you what the cadence should look like.</p>
     <a href="/contact/" class="btn-primary">Book a 30-minute call</a>
   </div>
 </section>
-
 <footer class="site">
   <div class="container">
     <div class="footer-grid">
