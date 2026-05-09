@@ -231,6 +231,15 @@ function openModal(el) {
       });
       close();
       toast("Saved.");
+      // Highlight the sidebar so Vernon sees it landed
+      const sb = document.querySelector(".review-sidebar");
+      if (sb) {
+        sb.classList.add("open");
+        setTimeout(() => {
+          const list = sb.querySelector("[data-list]");
+          if (list) list.scrollTop = 0;
+        }, 200);
+      }
     } catch (err) {
       errEl.textContent = "Save failed: " + err.message;
       errEl.style.display = "block";
