@@ -18,9 +18,6 @@ import {
   push,
   onValue,
   update,
-  query,
-  orderByChild,
-  equalTo,
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
 const cfg = window.PROTA_CONTACT_CONFIG;
@@ -57,11 +54,17 @@ function init() {
   // 5. Wire each annotatable element with a hover pill.
   wireAnchors();
 
-  // 6. Subscribe to comments for this page.
-  const commentsRef = query(ref(db, "comments"), orderByChild("page"), equalTo(pageSlug));
+  // 6. Subscribe to all comments and filter client-side. The dataset
+  //    is small enough that client filtering is fine, and this removes
+  //    the dependency on the database having .indexOn set on /comments/page
+  //    (which would otherwise be required for the orderByChild query).
+  console.log("[review-mode] page slug:", pageSlug);
+  const commentsRef = ref(db, "comments");
   onValue(commentsRef, (snap) => {
     const data = snap.val() || {};
-    state.comments = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+    const all = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+    state.comments = all.filter(c => c.page === pageSlug);
+    console.log(`[review-mode] ${all.length} total comments, ${state.comments.length} on this page`);
     renderCommentList();
     decorateAnchors();
   }, (err) => {
