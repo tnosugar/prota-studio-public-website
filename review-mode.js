@@ -1,15 +1,15 @@
 // review-mode.js
 //
-// Live-site review widget for protastudios.ai.
+// Live-site review widget za odvaz public surfaces (počevši sa /susreti/).
 //
 // Activated by ?review=1. Auto-anchors data-comment-id to every
 // content element (h1-h4, p, li inside <main>/<section>). Hover-to-pill,
-// click-to-comment. Comments stored at /comments/{push-id} in the same
-// Firebase RTDB the contact form uses.
+// click-to-comment. Comments stored at /comments/{push-id} in Firebase RTDB.
 //
-// Visibility: Vernon (or any reviewer at the URL) sees a sidebar drawer
-// listing all comments for the current page, with status (open / applied
-// / dismissed). On the public site (no ?review=1), the widget is inert.
+// Visibility: bilo koji reviewer na URL-u sa flagom vidi sidebar drawer
+// sa listom komentara za trenutnu stranu, sa status workflow-om (open /
+// applied / dismissed / reopen). Na javnoj stranici (bez ?review=1),
+// widget je inertan.
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import {
@@ -24,9 +24,26 @@ import {
 // (called below) accesses state synchronously via closures.
 const state = {
   comments: [],
-  filter: "open",
+  filter: "active", // "active" | "archived"
   error: null,
 };
+
+// ---------- Comment lifecycle helpers (shared) ----------
+// Comment shape u Firebase RTDB:
+//   /comments/{push-id}
+//     page, anchor, comment, replacement, text_preview, url, timestamp,
+//     user_agent
+//     archived: bool        — true znači u arhivi, false/undefined je aktivan
+//     archived_at: number   — timestamp arhiviranja
+//     edited_at: number     — timestamp poslednje izmene
+//
+// Legacy support: stari komentari sa `status: "applied"` ili `"dismissed"`
+// se tretiraju kao archived.
+function isArchived(c) {
+  if (c.archived === true) return true;
+  if (c.status === "applied" || c.status === "dismissed") return true;
+  return false;
+}
 
 const cfg = window.PROTA_CONTACT_CONFIG;
 if (!cfg || !cfg.FIREBASE_CONFIG) {
@@ -81,8 +98,14 @@ function init() {
     renderCommentList();
   });
 
-  // Expose helpers for debugging
-  window.__review = { state, db };
+  // Expose za debugging + out-of-band akcije (Claude može da pozove
+  // archiveComments(['id1', 'id2']) iz konzole posle primene izmena).
+  window.__review = {
+    state, db,
+    archiveComments, unarchiveComment,
+    editComment, deleteComment,
+    isArchived,
+  };
 }
 
 // =================================================================
@@ -117,9 +140,19 @@ function assignAnchors(pageSlug) {
   });
 
   // Step 2: collect annotatable elements
-  const TAGS = ["h1","h2","h3","h4","h5","h6","p","li","summary","a","button","label","blockquote","figcaption","details"];
-  const SPAN_SELECTORS = ["span.eyebrow","span.chip","span.lede","span.muted","span.tagline","span.role","span.section","span.copyright"];
-  const selector = TAGS.join(",") + "," + SPAN_SELECTORS.join(",") + ",.review-img-wrap";
+  // Široka lista — bilo koji element koji sadrži smislen tekst može
+  // dobiti anchor (filter ispod skida prazne wrappere).
+  const TAGS = [
+    "h1","h2","h3","h4","h5","h6",
+    "p","li","summary","a","button","label",
+    "blockquote","figcaption","details",
+    "td","th","dt","dd",
+    "strong","em","b","i","u","mark","cite","q",
+    "small","code","pre","kbd","samp","var",
+    "span","time","abbr",
+    "div","section","article","aside","header","footer","nav","main","figure",
+  ];
+  const selector = TAGS.join(",") + ",.review-img-wrap";
 
   const counters = {};
   // Cross-page counters for elements inside nav/footer that don't have
@@ -236,11 +269,11 @@ function wireAnchors() {
         pill.className = "review-pill";
         pill.type = "button";
         pill.textContent = "+";
-        pill.title = "Add a comment on this element";
+        pill.title = "Dodaj komentar na ovaj element";
         pill.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
-          openModal(el);
+          openModal(el, null);
         });
         el.appendChild(pill);
         // Pill visibility for elements that already have comments
@@ -251,51 +284,64 @@ function wireAnchors() {
 }
 
 function decorateAnchors() {
+  // Element-level status: ima li aktivnih (non-archived) komentara?
+  // Pending  → has-comment class (subtle terakota dashed outline)
+  // Empty / svi arhivirani → bez outline-a (vraća se u „čisto" stanje)
   document.querySelectorAll("[data-comment-id]").forEach((el) => {
     const id = el.getAttribute("data-comment-id");
-    const my = state.comments.filter((c) => c.anchor === id);
+    const active = state.comments.filter((c) => c.anchor === id && !isArchived(c));
     el.classList.remove("has-comment", "has-applied-comment");
-    if (my.some((c) => c.status === "open")) el.classList.add("has-comment");
-    else if (my.length && my.every((c) => c.status === "applied")) el.classList.add("has-applied-comment");
+    if (active.length) el.classList.add("has-comment");
     const pill = el.querySelector(".review-pill");
     if (pill) decoratePill(el, pill);
   });
 }
 
 function decoratePill(el, pill) {
-  const id = el.getAttribute("data-comment-id");
-  const my = state.comments.filter((c) => c.anchor === id);
-  pill.classList.remove("has-comment", "has-applied-comment");
-  if (my.some((c) => c.status === "open")) pill.classList.add("has-comment");
-  else if (my.length && my.every((c) => c.status === "applied")) pill.classList.add("has-applied-comment");
+  // Pill na hover prikazuje boju koja signalizuje status:
+  //   ima aktivnih → terakota (.has-comment)
+  //   inače → default forest (no class)
+  if (active.length) pill.classList.add("has-comment");
 }
 
 // =================================================================
 // Modal
 // =================================================================
 
-function openModal(el) {
+// Otvara modal za novi komentar (existingComment === null) ili edit
+// postojećeg (existingComment je objekat sa id, comment, replacement).
+function openModal(el, existingComment) {
   const id = el.getAttribute("data-comment-id");
   const preview = el.textContent.trim().slice(0, 200);
+  const isEdit = !!existingComment;
+
+  const titleText = isEdit ? "Uredi komentar" : "Novi komentar";
+  const submitText = isEdit ? "Save changes" : "Save comment";
+  const initComment = isEdit ? (existingComment.comment || "") : "";
+  const initReplacement = isEdit ? (existingComment.replacement || "") : "";
 
   const backdrop = document.createElement("div");
   backdrop.className = "review-modal-backdrop";
   backdrop.innerHTML = `
     <div class="review-modal" role="dialog">
-      <h3>Leave a comment</h3>
+      <h3>${titleText}</h3>
       <div class="anchor-info">${escapeHtml(id)}</div>
       <div class="anchor-preview">"${escapeHtml(preview)}${preview.length === 200 ? "…" : ""}"</div>
       <label>Comment <span class="opt">(what to change, why)</span></label>
-      <textarea name="comment" rows="3" placeholder="Tighten this, drop the second clause…" autofocus></textarea>
-      <label>Suggested replacement <span class="opt">(optional — verbatim copy if you have it)</span></label>
-      <textarea name="replacement" rows="4" placeholder="(optional) the exact rewrite…"></textarea>
+      <textarea name="comment" rows="3" placeholder="Shorten this, drop the second sentence…" autofocus></textarea>
+      <label>Replacement suggestion <span class="opt">(optional — verbatim text if you have it)</span></label>
+      <textarea name="replacement" rows="4" placeholder="(optional) exact replacement text…"></textarea>
       <div class="error" style="display:none"></div>
       <div class="actions">
         <button type="button" class="secondary" data-cancel>Cancel</button>
-        <button type="button" class="primary" data-submit>Save comment</button>
+        <button type="button" class="primary" data-submit>${submitText}</button>
       </div>
     </div>`;
   document.body.appendChild(backdrop);
+
+  // Pre-popuni za edit mode
+  backdrop.querySelector('textarea[name="comment"]').value = initComment;
+  backdrop.querySelector('textarea[name="replacement"]').value = initReplacement;
 
   const close = () => backdrop.remove();
   backdrop.addEventListener("click", (e) => {
@@ -307,32 +353,38 @@ function openModal(el) {
     const replacement = backdrop.querySelector('textarea[name="replacement"]').value.trim();
     const errEl = backdrop.querySelector(".error");
     if (!comment && !replacement) {
-      errEl.textContent = "Either a comment or a replacement is required.";
+      errEl.textContent = "Komentar ili predlog zamene je obavezan.";
       errEl.style.display = "block";
       return;
     }
     try {
-      await submitComment({
-        page: computePageSlug(window.location.pathname),
-        anchor: id,
-        comment,
-        replacement,
-        text_preview: preview.slice(0, 280),
-        url: window.location.href,
-      });
-      close();
-      toast("Saved.");
-      // Highlight the sidebar so Vernon sees it landed
-      const sb = document.querySelector(".review-sidebar");
-      if (sb) {
-        sb.classList.add("open");
-        setTimeout(() => {
-          const list = sb.querySelector("[data-list]");
-          if (list) list.scrollTop = 0;
-        }, 200);
+      if (isEdit) {
+        await editComment(existingComment.id, { comment, replacement });
+        close();
+        toast("Saved.");
+      } else {
+        await submitComment({
+          page: computePageSlug(window.location.pathname),
+          anchor: id,
+          comment,
+          replacement,
+          text_preview: preview.slice(0, 280),
+          url: window.location.href,
+        });
+        close();
+        toast("Saved.");
+        // Otvori sidebar pa fokus ide na novi komentar
+        const sb = document.querySelector(".review-sidebar");
+        if (sb) {
+          sb.classList.add("open");
+          setTimeout(() => {
+            const list = sb.querySelector("[data-list]");
+            if (list) list.scrollTop = 0;
+          }, 200);
+        }
       }
     } catch (err) {
-      errEl.textContent = "Save failed: " + err.message;
+      errEl.textContent = "Error: " + err.message;
       errEl.style.display = "block";
     }
   });
@@ -356,17 +408,43 @@ async function submitComment(data) {
     replacement: data.replacement || "",
     text_preview: data.text_preview,
     url: data.url,
-    status: "open",
+    archived: false,
     user_agent: navigator.userAgent.slice(0, 200),
     timestamp: Date.now(),
   });
 }
 
-async function setStatus(commentId, status, extra) {
+async function editComment(commentId, fields) {
   const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode-write");
   const db = getDatabase(app);
   const cRef = ref(db, "comments/" + commentId);
-  await update(cRef, Object.assign({ status, status_at: Date.now() }, extra || {}));
+  await update(cRef, Object.assign({}, fields, { edited_at: Date.now() }));
+}
+
+async function deleteComment(commentId) {
+  const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode-write");
+  const db = getDatabase(app);
+  const cRef = ref(db, "comments/" + commentId);
+  // Realtime DB delete = update sa null
+  await update(ref(db, "comments"), { [commentId]: null });
+}
+
+async function archiveComments(commentIds) {
+  const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode-write");
+  const db = getDatabase(app);
+  const now = Date.now();
+  const updates = {};
+  for (const id of commentIds) {
+    updates[id + "/archived"] = true;
+    updates[id + "/archived_at"] = now;
+  }
+  await update(ref(db, "comments"), updates);
+}
+
+async function unarchiveComment(commentId) {
+  const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode-write");
+  const db = getDatabase(app);
+  await update(ref(db, "comments/" + commentId), { archived: false, archived_at: null });
 }
 
 // =================================================================
@@ -377,8 +455,8 @@ function renderBanner() {
   const banner = document.createElement("div");
   banner.className = "review-banner";
   banner.innerHTML = `
-    <div><span class="dot"></span> Review mode &middot; click any paragraph or heading to leave a comment</div>
-    <div><a href="${window.location.pathname}">Exit</a></div>`;
+    <div><span class="dot"></span> Review mode &middot; click any element to leave a comment</div>
+    <div><a href="${window.location.pathname}">Zatvori</a></div>`;
   document.body.appendChild(banner);
 }
 
@@ -391,19 +469,17 @@ function renderSidebar() {
       <span class="count" data-count>0</span>
     </header>
     <div class="filter-row">
-      <button data-filter="open" class="active">Open</button>
-      <button data-filter="applied">Applied</button>
-      <button data-filter="dismissed">Dismissed</button>
-      <button data-filter="all">All</button>
+      <button data-filter="active" class="active">Active</button>
+      <button data-filter="archived">Archive</button>
     </div>
     <div class="comments" data-list>
-      <div class="empty">No comments yet. Hover any element and click "+".</div>
+      <div class="empty">No comments yet. Hover over any element and click "+".</div>
     </div>`;
 
   // Sidebar toggle for narrow screens
   const toggle = document.createElement("button");
   toggle.className = "review-sidebar-toggle";
-  toggle.textContent = "Comments";
+  toggle.textContent = "Komentari";
   toggle.addEventListener("click", () => {
     sb.classList.toggle("open");
   });
@@ -426,75 +502,189 @@ function renderCommentList() {
   if (!sb) return;
   const listEl = sb.querySelector("[data-list]");
   const countEl = sb.querySelector("[data-count]");
-  const filtered = state.comments
-    .filter((c) => state.filter === "all" ? true : (c.status || "open") === state.filter)
-    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const wantArchived = state.filter === "archived";
+  const filtered = state.comments.filter((c) => isArchived(c) === wantArchived);
 
   countEl.textContent = state.comments.length;
 
   if (state.error) {
-    listEl.innerHTML = `<div class="empty" style="color:#dc2626;">Database read error: ${escapeHtml(state.error)}<br/><br/><span style="font-size:11px;">Likely missing read rule on /comments. See Firebase rules doc.</span></div>`;
+    listEl.innerHTML = `<div class="empty" style="color:#dc2626;">Error reading database: ${escapeHtml(state.error)}<br/><br/><span style="font-size:11px;">Likely missing a read rule on /comments. Check Firebase rules.</span></div>`;
     return;
   }
 
   if (!filtered.length) {
-    listEl.innerHTML = `<div class="empty">No ${state.filter} comments.</div>`;
+    const msg = wantArchived
+      ? 'Archive is empty. Comments are archived when you click "Mark as done".'
+      : 'No active comments yet. Hover over any element and click "+".';
+    listEl.innerHTML = `<div class="empty">${msg}</div>`;
     return;
   }
 
-  listEl.innerHTML = filtered.map((c) => {
-    const status = c.status || "open";
-    const when = c.timestamp ? new Date(c.timestamp).toLocaleString() : "";
-    const actions = renderActions(c.id, status);
+  // Group comments by anchor. Within group: oldest first (natural reading
+  // order, replies follow original). Group order: most recent activity
+  // first (group sa najsvežijim komentarom ide na vrh).
+  const groupsMap = new Map();
+  for (const c of filtered) {
+    const key = c.anchor || "(no anchor)";
+    if (!groupsMap.has(key)) groupsMap.set(key, []);
+    groupsMap.get(key).push(c);
+  }
+  const groups = Array.from(groupsMap.entries())
+    .map(([anchor, comments]) => ({
+      anchor,
+      comments: comments.slice().sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)),
+      latest: Math.max(...comments.map((c) => c.timestamp || c.archived_at || 0)),
+    }))
+    .sort((a, b) => b.latest - a.latest);
+
+  listEl.innerHTML = groups.map((group) => {
+    const groupHTML = group.comments.map((c) => {
+      const archived = isArchived(c);
+      const when = c.timestamp ? new Date(c.timestamp).toLocaleString() : "";
+      const editedNote = c.edited_at ? ` &middot; edited ${new Date(c.edited_at).toLocaleString()}` : "";
+      const actions = renderActions(c.id, archived);
+      return `
+        <div class="review-comment ${archived ? 'archived' : 'pending'}" data-comment="${c.id}" data-anchor="${escapeHtml(c.anchor || "")}">
+          ${c.comment ? `<div class="text">${escapeHtml(c.comment)}</div>` : ""}
+          ${c.replacement ? `<div class="replacement">${escapeHtml(c.replacement)}</div>` : ""}
+          <div class="meta">
+            <span>${when}${editedNote}</span>
+          </div>
+          <div class="actions">${actions}</div>
+        </div>`;
+    }).join("");
+
+    const firstPreview = (group.comments[0] || {}).text_preview || "";
+    const previewSlice = firstPreview.slice(0, 100);
+    const previewHTML = firstPreview
+      ? `<div class="anchor-preview">"${escapeHtml(previewSlice)}${firstPreview.length > 100 ? "…" : ""}"</div>`
+      : "";
+    const n = group.comments.length;
+    const noun = pluralKomentara(n);
+    const statusBadge = wantArchived
+      ? `<span class="group-status applied">Done</span>`
+      : `<span class="group-status pending">Pending</span>`;
+    // Note: nema „Mark as done" dugmeta — Claude trenutno
+    // jedini izvršava komentare (arhivira ih kroz drugi mehanizam,
+    // npr. direktan write u RTDB ili out-of-band akcija). Ako se
+    // ikad pojavi human-in-the-loop role-a koja arhivira ručno,
+    // archive funkcija je u JS-u (archiveComments), samo treba
+    // restore-ovati group footer markup ovde.
+    const groupFooter = "";
+
     return `
-      <div class="review-comment ${status}" data-comment="${c.id}" data-anchor="${escapeHtml(c.anchor || "")}">
-        <div class="anchor">${escapeHtml(c.anchor || "(no anchor)")}</div>
-        ${c.comment ? `<div class="text">${escapeHtml(c.comment)}</div>` : ""}
-        ${c.replacement ? `<div class="replacement">${escapeHtml(c.replacement)}</div>` : ""}
-        <div class="meta">
-          <span class="status ${status}">${status}</span>
-          <span>${when}</span>
+      <div class="review-group ${wantArchived ? 'archived' : 'pending'}" data-anchor="${escapeHtml(group.anchor)}">
+        <div class="review-group-header" data-anchor="${escapeHtml(group.anchor)}">
+          <div class="anchor-row">
+            <div class="anchor">${escapeHtml(group.anchor)}</div>
+            ${statusBadge}
+          </div>
+          ${previewHTML}
+          <div class="group-count">${n} ${noun}</div>
         </div>
-        <div class="actions">${actions}</div>
+        ${groupHTML}
+        ${groupFooter}
       </div>`;
   }).join("");
 
-  // Click on the row body (anywhere except action buttons) scrolls to the anchor.
-  listEl.querySelectorAll(".review-comment").forEach((row) => {
-    row.addEventListener("click", (e) => {
-      if (e.target.closest("button")) return;
-      const anchor = row.getAttribute("data-anchor");
-      const target = document.querySelector(`[data-comment-id="${cssEscape(anchor)}"]`);
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+  // Helper — scroll + spotlight (single source of truth)
+  function spotlightAnchor(anchor) {
+    const target = document.querySelector(`[data-comment-id="${cssEscape(anchor)}"]`);
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    document.querySelectorAll(".review-spotlight").forEach((el) => {
+      el.classList.remove("review-spotlight");
+    });
+    // eslint-disable-next-line no-unused-expressions
+    void target.offsetWidth;
+    target.classList.add("review-spotlight");
+    clearTimeout(window.__reviewSpotlightTimer);
+    window.__reviewSpotlightTimer = setTimeout(() => {
+      target.classList.remove("review-spotlight");
+    }, 4000);
+  }
+
+  // Click on group header — scroll + spotlight
+  listEl.querySelectorAll(".review-group-header").forEach((header) => {
+    header.addEventListener("click", () => {
+      spotlightAnchor(header.getAttribute("data-anchor"));
     });
   });
 
-  // Action buttons: apply / dismiss / reopen.
-  listEl.querySelectorAll("[data-action]").forEach((btn) => {
+  // Click on the comment row body (anywhere except buttons)
+  listEl.querySelectorAll(".review-comment").forEach((row) => {
+    row.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
+      spotlightAnchor(row.getAttribute("data-anchor"));
+    });
+  });
+
+  // Per-comment Edit
+  listEl.querySelectorAll("[data-action='edit']").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      const action = btn.getAttribute("data-action");
       const id = btn.getAttribute("data-comment");
+      const comment = state.comments.find((c) => c.id === id);
+      if (!comment) return;
+      const anchorEl = document.querySelector(`[data-comment-id="${cssEscape(comment.anchor)}"]`);
+      if (!anchorEl) {
+        toast("Element no longer exists on the page.");
+        return;
+      }
+      openModal(anchorEl, comment);
+    });
+  });
+
+  // Per-comment Delete
+  listEl.querySelectorAll("[data-action='delete']").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-comment");
+      if (!confirm("Delete comment permanently?")) return;
       btn.disabled = true;
       try {
-        await setStatus(id, action);
-        toast(action === "open" ? "Reopened." : action.charAt(0).toUpperCase() + action.slice(1) + ".");
+        await deleteComment(id);
+        toast("Obrisano.");
       } catch (err) {
-        console.error("[review-mode] status update failed:", err);
-        toast("Update failed: " + err.message);
+        console.error("[review-mode] delete failed:", err);
+        toast("Error: " + err.message);
         btn.disabled = false;
       }
     });
   });
+
+  // Per-comment Restore (samo u arhivi)
+  listEl.querySelectorAll("[data-action='restore']").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-comment");
+      btn.disabled = true;
+      try {
+        await unarchiveComment(id);
+        toast("Restored to active.");
+      } catch (err) {
+        console.error("[review-mode] restore failed:", err);
+        toast("Error: " + err.message);
+        btn.disabled = false;
+      }
+    });
+  });
+
+  // Note: nema „archive-group-btn" handler-a jer ne render-ujemo button.
+  // archiveComments() funkcija ostaje u modulu — Claude (ili future
+  // human-in-the-loop role-a) je može pozvati direktno preko window.__review
+  // ili out-of-band Firebase write.
 }
 
-function renderActions(id, status) {
-  const apply = `<button data-comment="${id}" data-action="applied" class="apply-btn" title="Mark as applied">&#10004; Applied</button>`;
-  const dismiss = `<button data-comment="${id}" data-action="dismissed" class="dismiss-btn" title="Dismiss">&#10005; Dismiss</button>`;
-  const reopen = `<button data-comment="${id}" data-action="open" class="reopen-btn" title="Reopen">&#8634; Reopen</button>`;
-  if (status === "applied") return reopen;
-  if (status === "dismissed") return reopen;
-  return apply + dismiss;
+function renderActions(id, archived) {
+  if (archived) {
+    const restore = `<button data-comment="${id}" data-action="restore" class="restore-btn" title="Vrati u aktivne">&#8634; Vrati</button>`;
+    const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="Delete comment">&#10005; Delete</button>`;
+    return restore + del;
+  }
+  const edit = `<button data-comment="${id}" data-action="edit" class="edit-btn" title="Uredi komentar">&#9998; Uredi</button>`;
+  const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="Delete comment">&#10005; Delete</button>`;
+  return edit + del;
 }
 
 // =================================================================
@@ -509,6 +699,13 @@ function escapeHtml(str) {
 
 function cssEscape(s) {
   return (window.CSS && window.CSS.escape) ? window.CSS.escape(s) : String(s).replace(/[^\w-]/g, "\\$&");
+}
+
+// Serbian plural for "komentar" — 1 komentar, 2-4 komentara, 5+ komentara,
+// 11-14 komentara, 21 komentar (ends in 1 ali ne 11), itd.
+function pluralKomentara(n) {
+  if (n % 10 === 1 && n % 100 !== 11) return "komentar";
+  return "komentara";
 }
 
 function toast(text) {
