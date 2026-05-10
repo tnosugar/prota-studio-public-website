@@ -75,8 +75,11 @@
     btn.type = "button";
     btn.className = "review-toggle-btn";
     btn.setAttribute("data-review-skip", ""); // prevent self-anchoring
-    btn.textContent = "Comments";
-    btn.title = "Otvori mod za komentare na stranici";
+    // Labels (English defaults; override via window.{CONFIG}.REVIEW_LABELS)
+    const cfg = window.PROTA_CONTACT_CONFIG || {};
+    const labels = (cfg && cfg.REVIEW_LABELS) || {};
+    btn.textContent = labels.toggleButton || "Comments";
+    btn.title = labels.toggleButtonTitle || "Open comment review mode";
     btn.addEventListener("click", function () {
       const url = new URL(window.location.href);
       url.searchParams.set("review", "1");

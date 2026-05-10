@@ -45,12 +45,117 @@ function isArchived(c) {
   return false;
 }
 
+// ---------- Labels (localizable via cfg.REVIEW_LABELS) ----------
+// English defaults. Projects override via window.{CONFIG}.REVIEW_LABELS:
+//   window.PROTA_CONTACT_CONFIG = {
+//     FIREBASE_CONFIG: {...},
+//     REVIEW_LABELS: {
+//       activeTab: "Aktivni",
+//       archiveTab: "Arhiva",
+//       commentsCount: { one: "{n} komentar", few: "{n} komentara", other: "{n} komentara" },
+//       locale: "sr",
+//       // ...override any keys; unspecified ones fall back to English.
+//     }
+//   };
+// `locale` controls Intl.PluralRules form selection. `commentsCount`
+// (and any future plural-aware string) uses the locale's plural categories
+// (e.g. en: "one"/"other"; sr: "one"/"few"/"other").
+const DEFAULT_LABELS = {
+  locale: "en",
+  // Pill / element interaction
+  addCommentTitle: "Add comment to this element",
+  // Banner
+  bannerText: "Review mode",
+  bannerHint: "click any element to leave a comment",
+  bannerClose: "Close",
+  // Sidebar header + filter tabs
+  sidebarTitle: "Comments on this page",
+  activeTab: "Active",
+  archiveTab: "Archive",
+  // Empty states
+  noCommentsYet: 'No comments yet. Hover over any element and click "+".',
+  emptyArchive: 'Archive is empty. Comments are archived when you click "Mark as done".',
+  noActiveComments: 'No active comments yet. Hover over any element and click "+".',
+  // DB error
+  dbReadErrorPrefix: "Error reading database: ",
+  dbReadErrorHint: "Likely missing a read rule on /comments. Check Firebase rules.",
+  // Modal
+  modalTitleNew: "New comment",
+  modalTitleEdit: "Edit comment",
+  modalSubmitNew: "Save comment",
+  modalSubmitEdit: "Save changes",
+  modalCancel: "Cancel",
+  modalCommentLabel: "Comment",
+  modalCommentHint: "(what to change, why)",
+  modalCommentPlaceholder: "Shorten this, drop the second sentence…",
+  modalReplacementLabel: "Replacement suggestion",
+  modalReplacementHint: "(optional — verbatim text if you have it)",
+  modalReplacementPlaceholder: "(optional) exact replacement text…",
+  modalRequiredError: "Comment or replacement suggestion is required.",
+  // Toggle button
+  toggleButton: "Comments",
+  toggleButtonTitle: "Open comment review mode",
+  // Group status badges
+  statusDone: "Done",
+  statusPending: "Pending",
+  // Comment row meta
+  editedPrefix: "edited",
+  noAnchorFallback: "(no anchor)",
+  // Action buttons
+  editLabel: "Edit",
+  editTitle: "Edit comment",
+  deleteLabel: "Delete",
+  deleteTitle: "Delete comment",
+  restoreLabel: "Restore",
+  restoreTitle: "Restore to active",
+  // Toast / confirm
+  saved: "Saved.",
+  deleted: "Deleted.",
+  restoredToActive: "Restored to active.",
+  errorPrefix: "Error: ",
+  elementGone: "Element no longer exists on the page.",
+  confirmDelete: "Delete comment permanently?",
+  // Plurals (uses Intl.PluralRules with `locale`)
+  commentsCount: { one: "{n} comment", other: "{n} comments" },
+};
+
 const cfg = window.PROTA_CONTACT_CONFIG;
 if (!cfg || !cfg.FIREBASE_CONFIG) {
   console.error("[review-mode] missing PROTA_CONTACT_CONFIG.FIREBASE_CONFIG");
 } else {
   init();
 }
+
+// LABELS = defaults merged with per-project overrides. Shallow merge except
+// `commentsCount` (and any nested label objects) get a single level of
+// nested merge so projects can override just `commentsCount.few` without
+// re-specifying every form.
+const LABELS = (() => {
+  const overrides = (cfg && cfg.REVIEW_LABELS) || {};
+  const merged = Object.assign({}, DEFAULT_LABELS, overrides);
+  // One-level deep merge for known nested keys
+  for (const key of ["commentsCount"]) {
+    if (overrides[key] && typeof overrides[key] === "object") {
+      merged[key] = Object.assign({}, DEFAULT_LABELS[key], overrides[key]);
+    }
+  }
+  return merged;
+})();
+
+// Plural-aware count formatter. Uses Intl.PluralRules on LABELS.locale
+// and looks up the matching form in `tmpl` ({one, two, few, many, other}).
+// Falls back to `tmpl.other`, then `tmpl.one`, then plain count.
+function formatCount(n, key) {
+  const tmpl = LABELS[key];
+  if (!tmpl || typeof tmpl !== "object") return String(n);
+  let form = "other";
+  try {
+    form = new Intl.PluralRules(LABELS.locale || "en").select(n);
+  } catch (e) { /* fall through */ }
+  const text = tmpl[form] || tmpl.other || tmpl.one || "{n}";
+  return text.replace("{n}", String(n));
+}
+
 
 function init() {
   const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode");
@@ -269,7 +374,7 @@ function wireAnchors() {
         pill.className = "review-pill";
         pill.type = "button";
         pill.textContent = "+";
-        pill.title = "Dodaj komentar na ovaj element";
+        pill.title = LABELS.addCommentTitle;
         pill.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -315,8 +420,8 @@ function openModal(el, existingComment) {
   const preview = el.textContent.trim().slice(0, 200);
   const isEdit = !!existingComment;
 
-  const titleText = isEdit ? "Uredi komentar" : "Novi komentar";
-  const submitText = isEdit ? "Save changes" : "Save comment";
+  const titleText = isEdit ? LABELS.modalTitleEdit : LABELS.modalTitleNew;
+  const submitText = isEdit ? LABELS.modalSubmitEdit : LABELS.modalSubmitNew;
   const initComment = isEdit ? (existingComment.comment || "") : "";
   const initReplacement = isEdit ? (existingComment.replacement || "") : "";
 
@@ -327,13 +432,13 @@ function openModal(el, existingComment) {
       <h3>${titleText}</h3>
       <div class="anchor-info">${escapeHtml(id)}</div>
       <div class="anchor-preview">"${escapeHtml(preview)}${preview.length === 200 ? "…" : ""}"</div>
-      <label>Comment <span class="opt">(what to change, why)</span></label>
-      <textarea name="comment" rows="3" placeholder="Shorten this, drop the second sentence…" autofocus></textarea>
-      <label>Replacement suggestion <span class="opt">(optional — verbatim text if you have it)</span></label>
-      <textarea name="replacement" rows="4" placeholder="(optional) exact replacement text…"></textarea>
+      <label>${escapeHtml(LABELS.modalCommentLabel)} <span class="opt">${escapeHtml(LABELS.modalCommentHint)}</span></label>
+      <textarea name="comment" rows="3" placeholder="${escapeHtml(LABELS.modalCommentPlaceholder)}" autofocus></textarea>
+      <label>${escapeHtml(LABELS.modalReplacementLabel)} <span class="opt">${escapeHtml(LABELS.modalReplacementHint)}</span></label>
+      <textarea name="replacement" rows="4" placeholder="${escapeHtml(LABELS.modalReplacementPlaceholder)}"></textarea>
       <div class="error" style="display:none"></div>
       <div class="actions">
-        <button type="button" class="secondary" data-cancel>Cancel</button>
+        <button type="button" class="secondary" data-cancel>${escapeHtml(LABELS.modalCancel)}</button>
         <button type="button" class="primary" data-submit>${submitText}</button>
       </div>
     </div>`;
@@ -353,7 +458,7 @@ function openModal(el, existingComment) {
     const replacement = backdrop.querySelector('textarea[name="replacement"]').value.trim();
     const errEl = backdrop.querySelector(".error");
     if (!comment && !replacement) {
-      errEl.textContent = "Komentar ili predlog zamene je obavezan.";
+      errEl.textContent = LABELS.modalRequiredError;
       errEl.style.display = "block";
       return;
     }
@@ -361,7 +466,7 @@ function openModal(el, existingComment) {
       if (isEdit) {
         await editComment(existingComment.id, { comment, replacement });
         close();
-        toast("Saved.");
+        toast(LABELS.saved);
       } else {
         await submitComment({
           page: computePageSlug(window.location.pathname),
@@ -372,7 +477,7 @@ function openModal(el, existingComment) {
           url: window.location.href,
         });
         close();
-        toast("Saved.");
+        toast(LABELS.saved);
         // Otvori sidebar pa fokus ide na novi komentar
         const sb = document.querySelector(".review-sidebar");
         if (sb) {
@@ -384,7 +489,7 @@ function openModal(el, existingComment) {
         }
       }
     } catch (err) {
-      errEl.textContent = "Error: " + err.message;
+      errEl.textContent = LABELS.errorPrefix + err.message;
       errEl.style.display = "block";
     }
   });
@@ -455,8 +560,8 @@ function renderBanner() {
   const banner = document.createElement("div");
   banner.className = "review-banner";
   banner.innerHTML = `
-    <div><span class="dot"></span> Review mode &middot; click any element to leave a comment</div>
-    <div><a href="${window.location.pathname}">Zatvori</a></div>`;
+    <div><span class="dot"></span> ${escapeHtml(LABELS.bannerText)} &middot; ${escapeHtml(LABELS.bannerHint)}</div>
+    <div><a href="${window.location.pathname}">${escapeHtml(LABELS.bannerClose)}</a></div>`;
   document.body.appendChild(banner);
 }
 
@@ -465,21 +570,21 @@ function renderSidebar() {
   sb.className = "review-sidebar";
   sb.innerHTML = `
     <header>
-      <span>Comments on this page</span>
+      <span>${escapeHtml(LABELS.sidebarTitle)}</span>
       <span class="count" data-count>0</span>
     </header>
     <div class="filter-row">
-      <button data-filter="active" class="active">Active</button>
-      <button data-filter="archived">Archive</button>
+      <button data-filter="active" class="active">${escapeHtml(LABELS.activeTab)}</button>
+      <button data-filter="archived">${escapeHtml(LABELS.archiveTab)}</button>
     </div>
     <div class="comments" data-list>
-      <div class="empty">No comments yet. Hover over any element and click "+".</div>
+      <div class="empty">${escapeHtml(LABELS.noCommentsYet)}</div>
     </div>`;
 
   // Sidebar toggle for narrow screens
   const toggle = document.createElement("button");
   toggle.className = "review-sidebar-toggle";
-  toggle.textContent = "Komentari";
+  toggle.textContent = LABELS.toggleButton;
   toggle.addEventListener("click", () => {
     sb.classList.toggle("open");
   });
@@ -508,14 +613,14 @@ function renderCommentList() {
   countEl.textContent = state.comments.length;
 
   if (state.error) {
-    listEl.innerHTML = `<div class="empty" style="color:#dc2626;">Error reading database: ${escapeHtml(state.error)}<br/><br/><span style="font-size:11px;">Likely missing a read rule on /comments. Check Firebase rules.</span></div>`;
+    listEl.innerHTML = `<div class="empty" style="color:#dc2626;">${escapeHtml(LABELS.dbReadErrorPrefix)}${escapeHtml(state.error)}<br/><br/><span style="font-size:11px;">${escapeHtml(LABELS.dbReadErrorHint)}</span></div>`;
     return;
   }
 
   if (!filtered.length) {
     const msg = wantArchived
-      ? 'Archive is empty. Comments are archived when you click "Mark as done".'
-      : 'No active comments yet. Hover over any element and click "+".';
+      ? LABELS.emptyArchive
+      : LABELS.noActiveComments;
     listEl.innerHTML = `<div class="empty">${msg}</div>`;
     return;
   }
@@ -525,7 +630,7 @@ function renderCommentList() {
   // first (group sa najsvežijim komentarom ide na vrh).
   const groupsMap = new Map();
   for (const c of filtered) {
-    const key = c.anchor || "(no anchor)";
+    const key = c.anchor || LABELS.noAnchorFallback;
     if (!groupsMap.has(key)) groupsMap.set(key, []);
     groupsMap.get(key).push(c);
   }
@@ -541,7 +646,7 @@ function renderCommentList() {
     const groupHTML = group.comments.map((c) => {
       const archived = isArchived(c);
       const when = c.timestamp ? new Date(c.timestamp).toLocaleString() : "";
-      const editedNote = c.edited_at ? ` &middot; edited ${new Date(c.edited_at).toLocaleString()}` : "";
+      const editedNote = c.edited_at ? ` &middot; ${escapeHtml(LABELS.editedPrefix)} ${new Date(c.edited_at).toLocaleString()}` : "";
       const actions = renderActions(c.id, archived);
       return `
         <div class="review-comment ${archived ? 'archived' : 'pending'}" data-comment="${c.id}" data-anchor="${escapeHtml(c.anchor || "")}">
@@ -560,10 +665,10 @@ function renderCommentList() {
       ? `<div class="anchor-preview">"${escapeHtml(previewSlice)}${firstPreview.length > 100 ? "…" : ""}"</div>`
       : "";
     const n = group.comments.length;
-    const noun = pluralKomentara(n);
+    
     const statusBadge = wantArchived
-      ? `<span class="group-status applied">Done</span>`
-      : `<span class="group-status pending">Pending</span>`;
+      ? `<span class="group-status applied">${escapeHtml(LABELS.statusDone)}</span>`
+      : `<span class="group-status pending">${escapeHtml(LABELS.statusPending)}</span>`;
     // Note: nema „Mark as done" dugmeta — Claude trenutno
     // jedini izvršava komentare (arhivira ih kroz drugi mehanizam,
     // npr. direktan write u RTDB ili out-of-band akcija). Ako se
@@ -580,7 +685,7 @@ function renderCommentList() {
             ${statusBadge}
           </div>
           ${previewHTML}
-          <div class="group-count">${n} ${noun}</div>
+          <div class="group-count">${escapeHtml(formatCount(n, "commentsCount"))}</div>
         </div>
         ${groupHTML}
         ${groupFooter}
@@ -628,7 +733,7 @@ function renderCommentList() {
       if (!comment) return;
       const anchorEl = document.querySelector(`[data-comment-id="${cssEscape(comment.anchor)}"]`);
       if (!anchorEl) {
-        toast("Element no longer exists on the page.");
+        toast(LABELS.elementGone);
         return;
       }
       openModal(anchorEl, comment);
@@ -640,14 +745,14 @@ function renderCommentList() {
     btn.addEventListener("click", async (e) => {
       e.stopPropagation();
       const id = btn.getAttribute("data-comment");
-      if (!confirm("Delete comment permanently?")) return;
+      if (!confirm(LABELS.confirmDelete)) return;
       btn.disabled = true;
       try {
         await deleteComment(id);
-        toast("Obrisano.");
+        toast(LABELS.deleted);
       } catch (err) {
         console.error("[review-mode] delete failed:", err);
-        toast("Error: " + err.message);
+        toast(LABELS.errorPrefix + err.message);
         btn.disabled = false;
       }
     });
@@ -661,10 +766,10 @@ function renderCommentList() {
       btn.disabled = true;
       try {
         await unarchiveComment(id);
-        toast("Restored to active.");
+        toast(LABELS.restoredToActive);
       } catch (err) {
         console.error("[review-mode] restore failed:", err);
-        toast("Error: " + err.message);
+        toast(LABELS.errorPrefix + err.message);
         btn.disabled = false;
       }
     });
@@ -678,12 +783,12 @@ function renderCommentList() {
 
 function renderActions(id, archived) {
   if (archived) {
-    const restore = `<button data-comment="${id}" data-action="restore" class="restore-btn" title="Vrati u aktivne">&#8634; Vrati</button>`;
-    const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="Delete comment">&#10005; Delete</button>`;
+    const restore = `<button data-comment="${id}" data-action="restore" class="restore-btn" title="${escapeHtml(LABELS.restoreTitle)}">&#8634; ${escapeHtml(LABELS.restoreLabel)}</button>`;
+    const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="${escapeHtml(LABELS.deleteTitle)}">&#10005; ${escapeHtml(LABELS.deleteLabel)}</button>`;
     return restore + del;
   }
-  const edit = `<button data-comment="${id}" data-action="edit" class="edit-btn" title="Uredi komentar">&#9998; Uredi</button>`;
-  const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="Delete comment">&#10005; Delete</button>`;
+  const edit = `<button data-comment="${id}" data-action="edit" class="edit-btn" title="${escapeHtml(LABELS.editTitle)}">&#9998; ${escapeHtml(LABELS.editLabel)}</button>`;
+  const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="${escapeHtml(LABELS.deleteTitle)}">&#10005; ${escapeHtml(LABELS.deleteLabel)}</button>`;
   return edit + del;
 }
 
@@ -699,13 +804,6 @@ function escapeHtml(str) {
 
 function cssEscape(s) {
   return (window.CSS && window.CSS.escape) ? window.CSS.escape(s) : String(s).replace(/[^\w-]/g, "\\$&");
-}
-
-// Serbian plural for "komentar" — 1 komentar, 2-4 komentara, 5+ komentara,
-// 11-14 komentara, 21 komentar (ends in 1 ali ne 11), itd.
-function pluralKomentara(n) {
-  if (n % 10 === 1 && n % 100 !== 11) return "komentar";
-  return "komentara";
 }
 
 function toast(text) {
