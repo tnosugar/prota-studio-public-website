@@ -120,11 +120,6 @@ const DEFAULT_LABELS = {
 };
 
 const cfg = window.PROTA_CONTACT_CONFIG;
-if (!cfg || !cfg.FIREBASE_CONFIG) {
-  console.error("[review-mode] missing PROTA_CONTACT_CONFIG.FIREBASE_CONFIG");
-} else {
-  init();
-}
 
 // LABELS = defaults merged with per-project overrides. Shallow merge except
 // `commentsCount` (and any nested label objects) get a single level of
@@ -154,6 +149,15 @@ function formatCount(n, key) {
   } catch (e) { /* fall through */ }
   const text = tmpl[form] || tmpl.other || tmpl.one || "{n}";
   return text.replace("{n}", String(n));
+}
+
+// Init only when Firebase config is present. Order matters: LABELS +
+// formatCount above are needed by render functions that init() calls
+// synchronously (renderBanner, renderSidebar, renderCommentList).
+if (!cfg || !cfg.FIREBASE_CONFIG) {
+  console.error("[review-mode] missing PROTA_CONTACT_CONFIG.FIREBASE_CONFIG");
+} else {
+  init();
 }
 
 
