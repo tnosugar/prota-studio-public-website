@@ -717,20 +717,30 @@ html[data-review-mode="on"] .review-comment .actions button:hover {
   border-color: var(--review-primary-deep);
   color: var(--review-primary-deep);
 }
+html[data-review-mode="on"] .review-comment .actions button.apply-btn:hover {
+  background: var(--review-accent-cool-low);
+  border-color: var(--review-accent-cool);
+  color: var(--review-neutral-deep);
+}
 html[data-review-mode="on"] .review-comment .actions button.edit-btn:hover {
   background: #d1fae5;
   border-color: var(--review-primary-deep);
   color: var(--review-primary-deep);
 }
-html[data-review-mode="on"] .review-comment .actions button.delete-btn:hover {
-  background: var(--review-replacement-bg);
-  border-color: var(--review-replacement-text);
-  color: var(--review-replacement-text);
+html[data-review-mode="on"] .review-comment .actions button.archive-btn:hover {
+  background: var(--review-surface-tint);
+  border-color: var(--review-rule);
+  color: var(--review-text-muted);
 }
 html[data-review-mode="on"] .review-comment .actions button.restore-btn:hover {
   background: var(--review-surface-tint);
   border-color: var(--review-text-muted);
   color: var(--review-neutral-deep);
+}
+html[data-review-mode="on"] .review-comment .actions button.delete-btn:hover {
+  background: var(--review-replacement-bg);
+  border-color: var(--review-replacement-text);
+  color: var(--review-replacement-text);
 }
 html[data-review-mode="on"] .review-comment .actions button:disabled {
   opacity: 0.5;

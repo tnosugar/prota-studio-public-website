@@ -24,7 +24,7 @@ import {
 // (called below) accesses state synchronously via closures.
 const state = {
   comments: [],
-  filter: "active", // "active" | "archived"
+  filter: "active", // "active" | "applied" | "archived"
   error: null,
 };
 
@@ -33,17 +33,30 @@ const state = {
 //   /comments/{push-id}
 //     page, anchor, comment, replacement, text_preview, url, timestamp,
 //     user_agent
-//     archived: bool        — true znači u arhivi, false/undefined je aktivan
-//     archived_at: number   — timestamp arhiviranja
-//     edited_at: number     — timestamp poslednje izmene
+//     status:  'pending' | 'applied' | 'archived'  — canonical enum
+//     applied_at:  number  — timestamp transitioned to applied
+//     archived_at: number  — timestamp transitioned to archived
+//     edited_at:   number  — timestamp last edited
 //
-// Legacy support: stari komentari sa `status: "applied"` ili `"dismissed"`
-// se tretiraju kao archived.
-function isArchived(c) {
-  if (c.archived === true) return true;
-  if (c.status === "applied" || c.status === "dismissed") return true;
-  return false;
+// Reader-side shim: legacy records carry boolean `archived: true|false`
+// (pre-2026-05-12b) or `status: 'applied'|'dismissed'` (pre-shim). The
+// getStatus() helper normalizes all reads to the enum. Per
+// library/features/review-widget/comment-lifecycle.md §"Schema" and
+// §"Backward compatibility — reader-side shim". New writes use the
+// enum directly; the shim runs forever (or until a separate migration
+// pass walks /comments/ and rewrites every record — prota: done
+// 2026-05-13).
+function getStatus(c) {
+  if (c.status === "pending" || c.status === "applied" || c.status === "archived") return c.status;
+  if (c.archived === true) return "archived";
+  if (c.applied === true) return "applied";
+  if (c.status === "applied") return "applied";   // legacy enum value
+  if (c.status === "dismissed") return "archived"; // legacy enum value
+  return "pending";
 }
+function isPending(c)  { return getStatus(c) === "pending"; }
+function isApplied(c)  { return getStatus(c) === "applied"; }
+function isArchived(c) { return getStatus(c) === "archived"; }
 
 // ---------- Labels (localizable via cfg.REVIEW_LABELS) ----------
 // English defaults. Projects override via window.{CONFIG}.REVIEW_LABELS:
@@ -71,6 +84,7 @@ const DEFAULT_LABELS = {
   // Sidebar header + filter tabs
   sidebarTitle: "Comments on this page",
   activeTab: "Active",
+  appliedTab: "Applied",
   archiveTab: "Archive",
   // Empty states
   noCommentsYet: 'No comments yet. Hover over any element and click "+".',
@@ -96,22 +110,30 @@ const DEFAULT_LABELS = {
   toggleButton: "Comments",
   toggleButtonTitle: "Open comment review mode",
   // Group status badges
-  statusDone: "Done",
   statusPending: "Pending",
+  statusApplied: "Applied",
+  statusDone: "Done",  // legacy alias for statusApplied; kept for back-compat
   // Comment row meta
   editedPrefix: "edited",
   noAnchorFallback: "(no anchor)",
   // Action buttons
+  applyLabel: "Apply",
+  applyTitle: "Apply this comment (mark as acted on)",
   editLabel: "Edit",
   editTitle: "Edit comment",
+  archiveLabel: "Archive",
+  archiveTitle: "Archive comment",
+  restoreLabel: "Restore",
+  restoreTitle: "Restore to pending",
   deleteLabel: "Delete",
   deleteTitle: "Delete comment",
-  restoreLabel: "Restore",
-  restoreTitle: "Restore to active",
   // Toast / confirm
   saved: "Saved.",
+  applied: "Applied.",
+  archived: "Archived.",
   deleted: "Deleted.",
-  restoredToActive: "Restored to active.",
+  restoredToPending: "Restored to pending.",
+  restoredToActive: "Restored to pending.",  // legacy alias kept for back-compat
   errorPrefix: "Error: ",
   elementGone: "Element no longer exists on the page.",
   confirmDelete: "Delete comment permanently?",
@@ -401,14 +423,23 @@ function wireAnchors() {
 }
 
 function decorateAnchors() {
-  // Element-level status: ima li aktivnih (non-archived) komentara?
-  // Pending  → has-comment class (subtle terakota dashed outline)
-  // Empty / svi arhivirani → bez outline-a (vraća se u „čisto" stanje)
+  // Element-level status — per
+  // library/features/review-widget/css-isolation.md §"Has-comment outline"
+  // and library/features/review-widget/comment-lifecycle.md §"States".
+  //   any pending             → .has-comment (warm amber outline)
+  //   all non-archived applied → .has-applied-comment (sage outline)
+  //   all archived / none      → no class (default subtle dashed outline only)
   document.querySelectorAll("[data-comment-id]").forEach((el) => {
     const id = el.getAttribute("data-comment-id");
-    const active = state.comments.filter((c) => c.anchor === id && !isArchived(c));
+    const mine = state.comments.filter((c) => c.anchor === id);
+    const pending = mine.filter(isPending);
+    const applied = mine.filter(isApplied);
     el.classList.remove("has-comment", "has-applied-comment");
-    if (active.length) el.classList.add("has-comment");
+    if (pending.length > 0) {
+      el.classList.add("has-comment");
+    } else if (applied.length > 0 && pending.length === 0) {
+      el.classList.add("has-applied-comment");
+    }
     const pill = el.querySelector(".review-pill");
     if (pill) decoratePill(el, pill);
   });
@@ -525,10 +556,33 @@ async function submitComment(data) {
     replacement: data.replacement || "",
     text_preview: data.text_preview,
     url: data.url,
-    archived: false,
+    status: "pending",
     user_agent: navigator.userAgent.slice(0, 200),
     timestamp: Date.now(),
   });
+  // events.comment-created emitted at composition layer (toast on success);
+  // a future analytics consumer can hook window.addEventListener("comment-created", ...).
+}
+
+// Apply transition (pending -> applied). Per
+// library/features/review-widget/comment-lifecycle.md §"State transitions".
+// Fires events.comment-applied per library/events/comment-applied.md.
+async function applyComment(commentId) {
+  const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode-write");
+  const db = getDatabase(app);
+  const now = Date.now();
+  const cRef = ref(db, "comments/" + commentId);
+  await update(cRef, { status: "applied", applied_at: now });
+  // Emit event for downstream consumers (analytics, Slack notifier, etc.)
+  const c = state.comments.find((c) => c.id === commentId);
+  window.dispatchEvent(new CustomEvent("comment-applied", {
+    detail: {
+      id: commentId,
+      pageSlug: c ? c.page : undefined,
+      anchorId: c ? c.anchor : undefined,
+      appliedAt: now,
+    },
+  }));
 }
 
 async function editComment(commentId, fields) {
@@ -552,7 +606,7 @@ async function archiveComments(commentIds) {
   const now = Date.now();
   const updates = {};
   for (const id of commentIds) {
-    updates[id + "/archived"] = true;
+    updates[id + "/status"] = "archived";
     updates[id + "/archived_at"] = now;
   }
   await update(ref(db, "comments"), updates);
@@ -561,7 +615,11 @@ async function archiveComments(commentIds) {
 async function unarchiveComment(commentId) {
   const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode-write");
   const db = getDatabase(app);
-  await update(ref(db, "comments/" + commentId), { archived: false, archived_at: null });
+  await update(ref(db, "comments/" + commentId), {
+    status: "pending",
+    archived_at: null,
+    applied_at: null,
+  });
 }
 
 // =================================================================
@@ -587,6 +645,7 @@ function renderSidebar() {
     </header>
     <div class="filter-row">
       <button data-filter="active" class="active">${escapeHtml(LABELS.activeTab)}</button>
+      <button data-filter="applied">${escapeHtml(LABELS.appliedTab)}</button>
       <button data-filter="archived">${escapeHtml(LABELS.archiveTab)}</button>
     </div>
     <div class="comments" data-list>
@@ -619,8 +678,31 @@ function renderCommentList() {
   if (!sb) return;
   const listEl = sb.querySelector("[data-list]");
   const countEl = sb.querySelector("[data-count]");
-  const wantArchived = state.filter === "archived";
-  const filtered = state.comments.filter((c) => isArchived(c) === wantArchived);
+  const filterMode = state.filter;  // "active" | "applied" | "archived"
+  // Group classification — per library/features/review-widget/pending-archived-workflow.md §"The model".
+  //   active   — group has >= 1 pending comment
+  //   applied  — all non-archived comments are applied (>= 1 applied, 0 pending)
+  //   archived — all comments archived
+  // Each comment belongs to exactly one filter group based on its anchor.
+  const groupsByAnchor = new Map();
+  for (const c of state.comments) {
+    const key = c.anchor || LABELS.noAnchorFallback;
+    if (!groupsByAnchor.has(key)) groupsByAnchor.set(key, []);
+    groupsByAnchor.get(key).push(c);
+  }
+  function classifyGroup(comments) {
+    const pending  = comments.filter(isPending).length;
+    const applied  = comments.filter(isApplied).length;
+    const archived = comments.filter(isArchived).length;
+    if (pending > 0) return "active";
+    if (applied > 0 && pending === 0) return "applied";
+    if (archived === comments.length) return "archived";
+    return "active";  // fallback
+  }
+  const filtered = state.comments.filter((c) => {
+    const groupComments = groupsByAnchor.get(c.anchor || LABELS.noAnchorFallback) || [];
+    return classifyGroup(groupComments) === filterMode;
+  });
 
   countEl.textContent = state.comments.length;
 
@@ -630,9 +712,10 @@ function renderCommentList() {
   }
 
   if (!filtered.length) {
-    const msg = wantArchived
-      ? LABELS.emptyArchive
-      : LABELS.noActiveComments;
+    let msg;
+    if (filterMode === "archived") msg = LABELS.emptyArchive;
+    else if (filterMode === "applied") msg = LABELS.emptyApplied || LABELS.noActiveComments;
+    else msg = LABELS.noActiveComments;
     listEl.innerHTML = `<div class="empty">${msg}</div>`;
     return;
   }
@@ -656,12 +739,12 @@ function renderCommentList() {
 
   listEl.innerHTML = groups.map((group) => {
     const groupHTML = group.comments.map((c) => {
-      const archived = isArchived(c);
+      const status = getStatus(c);  // "pending" | "applied" | "archived"
       const when = c.timestamp ? new Date(c.timestamp).toLocaleString() : "";
       const editedNote = c.edited_at ? ` &middot; ${escapeHtml(LABELS.editedPrefix)} ${new Date(c.edited_at).toLocaleString()}` : "";
-      const actions = renderActions(c.id, archived);
+      const actions = renderActions(c.id, status);
       return `
-        <div class="review-comment ${archived ? 'archived' : 'pending'}" data-comment="${c.id}" data-anchor="${escapeHtml(c.anchor || "")}">
+        <div class="review-comment ${status}" data-comment="${c.id}" data-anchor="${escapeHtml(c.anchor || "")}">
           ${c.comment ? `<div class="text">${escapeHtml(c.comment)}</div>` : ""}
           ${c.replacement ? `<div class="replacement">${escapeHtml(c.replacement)}</div>` : ""}
           <div class="meta">
@@ -678,9 +761,17 @@ function renderCommentList() {
       : "";
     const n = group.comments.length;
     
-    const statusBadge = wantArchived
-      ? `<span class="group-status applied">${escapeHtml(LABELS.statusDone)}</span>`
-      : `<span class="group-status pending">${escapeHtml(LABELS.statusPending)}</span>`;
+    // Group-level status badge — per library/features/review-widget/pending-archived-workflow.md
+    // §"Status badges". Archived groups carry no badge (they only appear under the Archived
+    // filter); active groups carry .pending; all-applied groups carry .applied.
+    const groupStatus = classifyGroup(group.comments);
+    let statusBadge = "";
+    if (groupStatus === "active") {
+      statusBadge = `<span class="group-status pending">${escapeHtml(LABELS.statusPending)}</span>`;
+    } else if (groupStatus === "applied") {
+      statusBadge = `<span class="group-status applied">${escapeHtml(LABELS.statusApplied)}</span>`;
+    }
+    // archived groups: no badge (they only render under Archived filter)
     // Note: nema „Mark as done" dugmeta — Claude trenutno
     // jedini izvršava komentare (arhivira ih kroz drugi mehanizam,
     // npr. direktan write u RTDB ili out-of-band akcija). Ako se
@@ -690,7 +781,7 @@ function renderCommentList() {
     const groupFooter = "";
 
     return `
-      <div class="review-group ${wantArchived ? 'archived' : 'pending'}" data-anchor="${escapeHtml(group.anchor)}">
+      <div class="review-group ${groupStatus}" data-anchor="${escapeHtml(group.anchor)}">
         <div class="review-group-header" data-anchor="${escapeHtml(group.anchor)}">
           <div class="anchor-row">
             <div class="anchor">${escapeHtml(group.anchor)}</div>
@@ -736,6 +827,40 @@ function renderCommentList() {
     });
   });
 
+  // Per-comment Apply — pending -> applied
+  listEl.querySelectorAll("[data-action='apply']").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-comment");
+      btn.disabled = true;
+      try {
+        await applyComment(id);
+        toast(LABELS.applied);
+      } catch (err) {
+        console.error("[review-mode] apply failed:", err);
+        toast(LABELS.errorPrefix + err.message);
+        btn.disabled = false;
+      }
+    });
+  });
+
+  // Per-comment Archive — pending/applied -> archived
+  listEl.querySelectorAll("[data-action='archive']").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-comment");
+      btn.disabled = true;
+      try {
+        await archiveComments([id]);
+        toast(LABELS.archived);
+      } catch (err) {
+        console.error("[review-mode] archive failed:", err);
+        toast(LABELS.errorPrefix + err.message);
+        btn.disabled = false;
+      }
+    });
+  });
+
   // Per-comment Edit
   listEl.querySelectorAll("[data-action='edit']").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
@@ -778,7 +903,7 @@ function renderCommentList() {
       btn.disabled = true;
       try {
         await unarchiveComment(id);
-        toast(LABELS.restoredToActive);
+        toast(LABELS.restoredToPending);
       } catch (err) {
         console.error("[review-mode] restore failed:", err);
         toast(LABELS.errorPrefix + err.message);
@@ -793,15 +918,20 @@ function renderCommentList() {
   // ili out-of-band Firebase write.
 }
 
-function renderActions(id, archived) {
-  if (archived) {
-    const restore = `<button data-comment="${id}" data-action="restore" class="restore-btn" title="${escapeHtml(LABELS.restoreTitle)}">&#8634; ${escapeHtml(LABELS.restoreLabel)}</button>`;
-    const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="${escapeHtml(LABELS.deleteTitle)}">&#10005; ${escapeHtml(LABELS.deleteLabel)}</button>`;
-    return restore + del;
-  }
-  const edit = `<button data-comment="${id}" data-action="edit" class="edit-btn" title="${escapeHtml(LABELS.editTitle)}">&#9998; ${escapeHtml(LABELS.editLabel)}</button>`;
-  const del = `<button data-comment="${id}" data-action="delete" class="delete-btn" title="${escapeHtml(LABELS.deleteTitle)}">&#10005; ${escapeHtml(LABELS.deleteLabel)}</button>`;
-  return edit + del;
+function renderActions(id, status) {
+  // Per-status button matrix per
+  // library/features/review-widget/comment-lifecycle.md §"Per-comment actions in the sidebar".
+  //   pending  → Apply, Edit, Archive, Delete
+  //   applied  → Restore, Archive, Delete
+  //   archived → Restore, Delete
+  const apply   = `<button data-comment="${id}" data-action="apply"   class="apply-btn"   title="${escapeHtml(LABELS.applyTitle)}">&#10004; ${escapeHtml(LABELS.applyLabel)}</button>`;
+  const edit    = `<button data-comment="${id}" data-action="edit"    class="edit-btn"    title="${escapeHtml(LABELS.editTitle)}">&#9998; ${escapeHtml(LABELS.editLabel)}</button>`;
+  const archive = `<button data-comment="${id}" data-action="archive" class="archive-btn" title="${escapeHtml(LABELS.archiveTitle)}">&#128450; ${escapeHtml(LABELS.archiveLabel)}</button>`;
+  const restore = `<button data-comment="${id}" data-action="restore" class="restore-btn" title="${escapeHtml(LABELS.restoreTitle)}">&#8634; ${escapeHtml(LABELS.restoreLabel)}</button>`;
+  const del     = `<button data-comment="${id}" data-action="delete"  class="delete-btn"  title="${escapeHtml(LABELS.deleteTitle)}">&#10005; ${escapeHtml(LABELS.deleteLabel)}</button>`;
+  if (status === "archived") return restore + del;
+  if (status === "applied")  return restore + archive + del;
+  return apply + edit + archive + del;  // pending (default)
 }
 
 // =================================================================
