@@ -3,322 +3,114 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Learning Sprint by Prota Studios. Validate for the agentic age.</title>
-<meta name="description" content="Prota's Validate program, productized for teams shipping with AI. Kill-or-commit decisions in weeks, not quarters." />
+<title>Learning Sprint | AI made shipping cheap. We make knowing fast — Prota Studios</title>
+<meta name="description" content="Episodic 30 / 60 / 90-day validation. Decision-grade evidence on a fixed clock. Prota's Validate program, productized for teams shipping with AI." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/site.css" />
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/assets/prota-favicon-small.png" />
 <link rel="apple-touch-icon" href="/brand/assets/prota-brandmark-favicon-large.png" />
+
 <style>
-  /* prota-studio brand palette (extracted from protastudios.com 2026-04-26).
-     Variable names preserved; values mapped to the brand. See brand/assets/palette.json. */
-  :root {
-    --navy: #0c0407;        /* was: dark navy. Now: brand black-900 (near-black) for headings. */
-    --navy-dark: #000000;   /* deepest. */
-    --teal: #487588;        /* was: emerald teal. Now: brand --prota-blue, the primary accent. */
-    --teal-mid: #5c8a9e;    /* lighter prota-blue (mid). */
-    --teal-light: #e8eef1;  /* very light prota-blue tint for soft section backgrounds. */
-    --gray-50: #f9f9f9;     /* brand --black-50, light-section background. */
-    --gray-100: #f4f4f4;    /* brand --gray-1. */
-    --gray-200: #e5e5e5;    /* brand --black-100, light borders. */
-    --gray-300: #b3b3b3;    /* brand --black-300. */
-    --gray-600: #666;       /* brand --black-600, body text. */
-    --body: #333;           /* brand --black-800, strong body. */
-    --accent: #b39d63;      /* brand --gold, secondary accent (rare). */
-    --white: #ffffff;
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    color: var(--body);
-    line-height: 1.55;
-    background: var(--white);
-  }
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-  .container-narrow { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+  /* Page-specific visual layer for /learning-sprint/. Everything that
+     site.css already provides — nav, footer, .container, .block,
+     .eyebrow, .lede, .cta-row, .btn-primary/.btn-secondary, .cards,
+     .card, .card.featured, details/summary, .compare table, footer.site
+     — is not re-declared here. */
 
-  /* Top nav */
-  nav.top {
-    padding: 20px 0;
-    border-bottom: 1px solid var(--gray-200);
-    background: var(--white);
-    position: sticky; top: 0; z-index: 50;
-  }
-  nav.top .inner {
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  nav.top .brand {
-    font-weight: 700; color: var(--navy); font-size: 16px; letter-spacing: 0.01em;
-  }
-  nav.top .brand span { color: var(--teal); font-weight: 600; }
-  nav.top .cta {
-    font-size: 14px; font-weight: 600; color: var(--white);
-    background: var(--navy); padding: 10px 18px; border-radius: 6px;
-    text-decoration: none;
-  }
-  nav.top .cta:hover { background: var(--navy-dark); }
-
-  /* Hero */
-  section.hero {
-    background: linear-gradient(180deg, #FAFBFD 0%, var(--white) 100%);
-    padding: 96px 0 80px;
-    border-bottom: 1px solid var(--gray-200);
-  }
-  .chip {
+  /* Three tiers — uses .cards.cols-3 + .card / .card.featured from site.css,
+     plus the small per-tier additions below for the duration tag and the
+     audience footer line. */
+  .tier .tier-duration {
     display: inline-block;
-    background: var(--teal-light);
-    color: var(--teal);
-    font-size: 13px; font-weight: 700;
-    padding: 6px 14px; border-radius: 999px;
-    letter-spacing: 0.04em; text-transform: uppercase;
-    margin-bottom: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--prota-blue);
+    background: var(--prota-blue-tint);
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin: 4px 0 16px;
+    letter-spacing: 0.02em;
   }
-  h1.hero {
-    font-size: clamp(36px, 5vw, 56px);
-    line-height: 1.05;
-    font-weight: 800;
-    color: var(--navy);
-    letter-spacing: -0.02em;
-    margin: 0 0 24px;
-  }
-  p.subhead {
-    font-size: 20px; color: var(--body);
-    max-width: 720px; margin: 0 0 36px;
-  }
-  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
-  .btn-primary, .btn-secondary {
-    display: inline-block; padding: 14px 24px; border-radius: 8px;
-    font-weight: 600; font-size: 16px; text-decoration: none;
-    transition: all 0.2s ease; cursor: pointer; border: none; font-family: inherit;
-  }
-  .btn-primary { background: var(--navy); color: var(--white); }
-  .btn-primary:hover { background: var(--navy-dark); transform: translateY(-1px); }
-  .btn-secondary { background: var(--white); color: var(--navy); border: 2px solid var(--navy); }
-  .btn-secondary:hover { background: var(--navy); color: var(--white); }
-
-  .trust-strip {
-    font-size: 15px; color: var(--gray-600); line-height: 1.7;
-    max-width: 760px; padding-top: 24px;
-    border-top: 1px solid var(--gray-200);
-  }
-  .trust-strip strong { color: var(--body); font-weight: 600; }
-
-  /* Generic section styling */
-  section.block { padding: 88px 0; border-bottom: 1px solid var(--gray-200); }
-  section.block.alt { background: var(--gray-50); }
-  h2.section {
-    font-size: clamp(28px, 3.6vw, 40px);
-    line-height: 1.1;
-    color: var(--navy);
-    margin: 0 0 24px;
-    font-weight: 800; letter-spacing: -0.015em;
-  }
-  p.body { font-size: 18px; margin: 0 0 16px; max-width: 720px; }
-
-  /* Two-column agentic cards */
-  .two-col {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px;
-  }
-  .card {
-    background: var(--white); border: 1px solid var(--gray-200);
-    border-radius: 12px; padding: 32px;
-  }
-  .card.teal-left {
-    border-left: 4px solid var(--teal);
-  }
-  .card .eyebrow {
-    font-size: 12px; font-weight: 700; color: var(--teal);
-    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
-  }
-  .card h3 {
-    font-size: 20px; color: var(--navy); margin: 0 0 12px; font-weight: 700;
-  }
-  .card p { font-size: 15px; margin: 0; color: var(--body); line-height: 1.65; }
-
-  /* Tier cards */
-  .tiers {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px;
-  }
-  .tier-card {
-    background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px;
-    padding: 32px 28px; display: flex; flex-direction: column;
-    transition: all 0.2s ease; cursor: pointer;
-  }
-  .tier-card:hover { border-color: var(--navy); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31, 56, 100, 0.08); }
-  .tier-card.featured { border-color: var(--teal); border-width: 2px; position: relative; }
-  .tier-card.featured::before {
-    content: "Most teams start here"; position: absolute; top: -12px; left: 50%;
-    transform: translateX(-50%); background: var(--teal); color: var(--white);
-    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-    padding: 4px 14px; border-radius: 999px; white-space: nowrap;
-  }
-  .tier-card .name { font-size: 20px; font-weight: 800; color: var(--navy); }
-  .tier-card .duration { font-size: 14px; color: var(--gray-600); margin: 4px 0 16px; }
-  .tier-card .price { font-size: 22px; font-weight: 700; color: var(--teal); margin-bottom: 20px; }
-  .tier-card .desc { font-size: 14px; color: var(--body); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
-  .tier-card .audience {
-    font-size: 13px; color: var(--gray-600); font-style: italic;
-    padding-top: 16px; border-top: 1px solid var(--gray-200);
+  .tier h3 { margin-top: 0; font-size: 26px; }
+  .tier .tier-audience {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--black-100);
+    font-size: 13px;
+    color: var(--black-600);
+    font-style: italic;
   }
 
-  .tier-cta { text-align: center; margin-top: 40px; font-size: 16px; color: var(--gray-600); }
-  .tier-cta a { color: var(--navy); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
-
-  /* Method strip */
+  /* Method strip — five-step horizontal flow with arrows between. Stacks
+     vertically below 720px with arrows rotated 90deg. */
   .method-strip {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 16px; margin: 40px 0 24px; padding: 28px; background: var(--white);
-    border: 1px solid var(--gray-200); border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 24px;
     flex-wrap: wrap;
   }
-  .method-step { font-weight: 700; color: var(--navy); font-size: 18px; }
-  .method-arrow { color: var(--teal); font-size: 20px; font-weight: 700; }
-
-  /* Audience cards */
-  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
-
-  /* Proof */
-  .logo-strip {
-    display: flex; flex-wrap: wrap; gap: 28px 40px; justify-content: center;
-    padding: 28px 0; margin: 32px 0;
-    border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200);
+  .method-step {
+    flex: 1 1 0;
+    min-width: 120px;
+    background: var(--white);
+    border: 1px solid var(--black-100);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-weight: 600;
+    color: var(--black-900);
+    text-align: center;
+    font-size: 15px;
   }
-  .logo-strip .logo {
-    font-size: 14px; font-weight: 700; color: var(--gray-600);
-    letter-spacing: 0.05em; text-transform: uppercase;
+  .method-arrow {
+    color: var(--prota-blue);
+    font-size: 20px;
+    font-weight: 300;
+    flex: 0 0 auto;
   }
-  .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
-  .proof-tile {
-    background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px;
-    padding: 28px;
-  }
-  .proof-tile .client {
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--teal); margin-bottom: 4px;
-  }
-  .proof-tile .title { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
-  .proof-tile p { font-size: 14px; line-height: 1.65; margin: 0; color: var(--body); }
-
-  /* FAQ */
-  details {
-    border-bottom: 1px solid var(--gray-200); padding: 20px 0;
-  }
-  details:first-of-type { border-top: 1px solid var(--gray-200); }
-  summary {
-    cursor: pointer; list-style: none; font-size: 18px; font-weight: 600; color: var(--navy);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  summary::-webkit-details-marker { display: none; }
-  summary::after {
-    content: "+"; font-size: 24px; color: var(--teal); font-weight: 300; transition: transform 0.2s;
-  }
-  details[open] summary::after { content: "\2212"; }
-  details p { font-size: 16px; color: var(--body); line-height: 1.7; margin: 16px 0 0; max-width: 720px; }
-
-  /* Contact form */
-  .contact-wrap { max-width: 720px; margin: 0 auto; }
-  form.contact { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 40px; }
-  .field { margin-bottom: 20px; }
-  .field label {
-    display: block; font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 6px;
-  }
-  .field label .required { color: var(--accent); }
-  .field input.field select.field textarea {
-    width: 100%; padding: 12px 14px; font-size: 15px;
-    border: 1px solid var(--gray-300); border-radius: 8px;
-    font-family: inherit; color: var(--body); background: var(--white);
-    transition: border-color 0.2s;
-  }
-  .field input:focus.field select:focus.field textarea:focus {
-    outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(31, 56, 100, 0.1);
-  }
-  .field textarea { resize: vertical; min-height: 96px; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-  .consent { font-size: 13px; color: var(--gray-600); margin: 20px 0; line-height: 1.55; }
-  form.contact button {
-    width: 100%; padding: 16px; font-size: 16px; font-weight: 700;
-    background: var(--navy); color: var(--white); border: none; border-radius: 8px;
-    cursor: pointer; font-family: inherit; transition: background 0.2s;
-  }
-  form.contact button:hover { background: var(--navy-dark); }
-  .calendar-fallback {
-    text-align: center; margin-top: 32px; padding-top: 32px;
-    border-top: 1px solid var(--gray-200); font-size: 15px; color: var(--gray-600);
-  }
-  .calendar-fallback a {
-    display: inline-block; margin-top: 12px; color: var(--navy);
-    font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
+  @media (max-width: 720px) {
+    .method-strip { flex-direction: column; align-items: stretch; }
+    .method-arrow { transform: rotate(90deg); text-align: center; }
   }
 
-  .success {
-    display: none; background: var(--teal-light); border: 1px solid var(--teal);
-    color: var(--teal); padding: 20px; border-radius: 8px; margin-bottom: 20px;
-    font-size: 15px; line-height: 1.6;
+  /* Proof tiles — uses .cards.cols-2 + .card from site.css, plus the
+     small client / project-title accents below. */
+  .proof .client {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--prota-blue);
+    margin-bottom: 4px;
   }
-  .success.visible { display: block; }
+  .proof h3 { font-size: 19px; margin: 0 0 12px; }
 
-  /* Footer */
-  footer {
-    background: var(--navy-dark); color: var(--gray-200); padding: 40px 0;
-    font-size: 14px;
+  /* Logo wall — same six-column grid as other pages. Keeps logos
+     monochrome at rest, color on hover. */
+  .logo-wall {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 32px 40px;
+    align-items: center;
+    justify-items: center;
   }
-  footer .inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  footer a { color: var(--white); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  /* Mobile */
-  @media (max-width: 768px) {
-    .two-col.three-col.tiers.proof-grid { grid-template-columns: 1fr; }
-    .field-row { grid-template-columns: 1fr; }
-    .method-strip { flex-direction: column; align-items: flex-start; }
-    .method-arrow { transform: rotate(90deg); }
-    section.block, section.hero { padding: 56px 0; }
+  .logo-wall img {
+    height: 26px;
+    width: auto;
+    max-width: 130px;
+    filter: grayscale(100%);
+    opacity: 0.75;
+    transition: opacity 0.2s, filter 0.2s;
   }
-</style>
-
-<style>
-  /* Visual layer — added 2026-05-08 */
-  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
-  .hero-grid .hero-image { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; background: var(--alt, #f3f5f9); }
-  .hero-grid .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
-    .hero-grid .hero-image { max-width: 560px; margin: 0 auto; }
-  }
-  .accent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 32px; }
-  .accent-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; display: block; }
-  @media (max-width: 800px) { .accent-grid { grid-template-columns: 1fr; gap: 24px; } }
-  .audience-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
-  .audience-card { border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); display: flex; flex-direction: column; }
-  .audience-card .photo { aspect-ratio: 16/10; overflow: hidden; }
-  .audience-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .audience-card .body { padding: 20px 22px 22px; }
-  .audience-card h3 { margin: 0 0 6px; font-size: 17px; }
-  .audience-card p { margin: 0; font-size: 15px; line-height: 1.6; }
-  .logo-wall { display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px 40px; align-items: center; justify-items: center; margin-top: 24px; }
-  .logo-wall img { height: 26px; width: auto; max-width: 130px; filter: grayscale(100%); opacity: 0.75; transition: opacity 0.2s, filter 0.2s; }
   .logo-wall img:hover { opacity: 1; filter: grayscale(0%); }
-  @media (max-width: 800px) { .logo-wall { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
-  .steps-with-accents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-  .step-card { display: flex; gap: 20px; padding: 22px 24px; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; background: var(--white, #fff); }
-  .step-card .num { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--prota-blue, #1F3864); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
-  .step-card h4 { margin: 0 0 6px; font-size: 17px; }
-  .step-card p { margin: 0; font-size: 14px; line-height: 1.6; }
-  @media (max-width: 800px) { .steps-with-accents { grid-template-columns: 1fr; } }
-  .work-card { display: flex; flex-direction: column; border: 1px solid var(--black-100, #e5e7eb); border-radius: 12px; overflow: hidden; background: var(--white, #fff); text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
-  .work-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31, 56, 100, 0.10); }
-  .work-card .photo { aspect-ratio: 16/10; overflow: hidden; background: var(--alt, #f3f5f9); }
-  .work-card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .work-card .body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
-  .work-card h3 { margin: 0 0 8px; font-size: 19px; }
-  .work-card p { margin: 0 0 16px; flex: 1; }
-  .work-card .card-cta { font-weight: 600; }
+  @media (max-width: 800px) {
+    .logo-wall { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  }
 </style>
+
 <meta property="og:title" content="Learning Sprint | AI made shipping cheap. We make knowing fast — Prota Studios" />
 <meta property="og:description" content="Episodic 30 / 60 / 90-day validation. Decision-grade evidence on a fixed clock." />
 <meta property="og:image" content="https://protastudios.ai/brand/assets/og/learning-sprint.png" />
@@ -335,41 +127,37 @@
 </head>
 <body>
 
-<!-- TOP NAV -->
 <nav class="top">
-  <div class="container inner">
-    <div class="brand">
-      <a href="/" style="display: inline-flex; align-items: center; text-decoration: none; color: var(--navy);">
-        <img src="/brand/assets/Prota_Studios_logo.png" alt="Prota Studios" style="height: 28px; margin-right: 12px;" />
-        <span style="color: var(--gray-300); font-weight: 400; margin-right: 12px;">|</span>
-        <span style="font-weight: 600;">Learning Sprint</span>
-      </a>
-    </div>
-    <div style="display: flex; gap: 24px; align-items: center;">
-      <a href="/how-it-works/" style="color: var(--body); text-decoration: none; font-size: 14px; font-weight: 500;">How it works</a>
-      <a href="/continuous/" style="color: var(--body); text-decoration: none; font-size: 14px; font-weight: 500;">Continuous</a>
-      <a href="/work/" style="color: var(--body); text-decoration: none; font-size: 14px; font-weight: 500;">Work</a>
-      <a href="/about/" style="color: var(--body); text-decoration: none; font-size: 14px; font-weight: 500;">About</a>
-      <a href="#contact" class="cta">Book a call</a>
-    </div>
+  <div class="container">
+    <a href="/" class="logo"><img src="/brand/assets/Prota_Studios_logo.png" alt="Prota Studios" /></a>
+    <ul>
+      <li><a href="/how-it-works/">How it works</a></li>
+      <li><a href="/learning-sprint/">Learning Sprint</a></li>
+      <li><a href="/continuous/">Continuous</a></li>
+      <li><a href="/work/">Work</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/contact/" class="cta">Book a call</a></li>
+    </ul>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="container">
-    <div class="chip">New &middot; Validate, for the agentic age</div>
-    <h1 class="hero">AI made shipping cheap.<br />We make knowing fast.</h1>
-    <p class="subhead">Prota&rsquo;s Validate program, reworked for teams shipping with AI. A productized engagement that turns &ldquo;we shipped, we are not sure if anyone wants it&rdquo; into a kill-or-commit decision backed by real evidence, in weeks not quarters.</p>
+<!-- Hero -->
+<section class="block">
+  <div class="container-narrow">
+    <span class="eyebrow">Validate, for the agentic age</span>
+    <h1>AI made shipping cheap. We make knowing fast.</h1>
+    <p class="lede">Prota&rsquo;s Validate program, reworked for teams shipping with AI. A productized engagement that turns &ldquo;we shipped, we are not sure if anyone wants it&rdquo; into a kill-or-commit decision backed by real evidence, in weeks not quarters.</p>
     <div class="cta-row">
-      <a href="#contact" class="btn-primary">Book a call</a>
+      <a href="/contact/" class="btn-primary">Book a call</a>
       <a href="#tiers" class="btn-secondary">See the three tiers</a>
     </div>
   </div>
 </section>
+
+<!-- Logo wall -->
 <section class="block alt">
   <div class="container">
-    <p class="center muted" style="margin: 0 0 8px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Same playbook. Real teams.</p>
+    <p class="center muted" style="margin: 0 0 28px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Same playbook. Real teams.</p>
     <div class="logo-wall">
       <img src="/brand/assets/logos/citi.svg" alt="Citi" />
       <img src="/brand/assets/logos/visa.svg" alt="Visa" />
@@ -387,28 +175,28 @@
   </div>
 </section>
 
-<!-- THE SHIFT -->
+<!-- The shift -->
 <section class="block">
   <div class="container-narrow">
     <h2 class="section">The hard part moved.</h2>
-    <p class="body">AI collapsed the cost of shipping. Teams are producing more software than at any point in the last decade. It used to be that build was the hard part. Now the hard part is knowing whether anyone wants what you built.</p>
-    <p class="body">Coaching will give you a framework. Tools will give you a feature. Neither gets you to a decision your board will accept.</p>
+    <p>AI collapsed the cost of shipping. Teams are producing more software than at any point in the last decade. It used to be that build was the hard part. Now the hard part is knowing whether anyone wants what you built.</p>
+    <p>Coaching will give you a framework. Tools will give you a feature. Neither gets you to a decision your board will accept.</p>
   </div>
 </section>
 
-<!-- THE PROGRAM -->
+<!-- The program -->
 <section class="block alt">
   <div class="container">
     <h2 class="section">Validate, reworked for teams shipping with AI.</h2>
-    <p class="body">The Learning Sprint is the productized form of Prota&rsquo;s Validate program, a decade of evidence work now tuned for the pace of agentic delivery. A multi-disciplinary team runs a tested playbook. We design the tests, run them, instrument them, and deliver decision-ready artifacts. The output is a kill-or-commit recommendation, not another framework.</p>
-    <div class="two-col">
-      <div class="card teal-left">
-        <div class="eyebrow">For teams shipping with AI</div>
+    <p style="max-width: 820px; margin: 0 auto 32px;">The Learning Sprint is the productized form of Prota&rsquo;s Validate program, a decade of evidence work now tuned for the pace of agentic delivery. A multi-disciplinary team runs a tested playbook. We design the tests, run them, instrument them, and deliver decision-ready artifacts. The output is a kill-or-commit recommendation, not another framework.</p>
+    <div class="cards cols-2">
+      <div class="card">
+        <span class="eyebrow">For teams shipping with AI</span>
         <h3>You ship faster than you can validate.</h3>
         <p>The Sprint gives you a structured parallel track. Small. Instrumented. Decision-grade. So the next capital call is based on evidence, not velocity.</p>
       </div>
-      <div class="card teal-left">
-        <div class="eyebrow">Delivered with agentic tools</div>
+      <div class="card">
+        <span class="eyebrow">Delivered with agentic tools</span>
         <h3>Agentic inside the delivery.</h3>
         <p>We use the same agentic tools inside delivery. Research, test build, analytics, synthesis, all compressed. That is how a program this thorough is deliverable in weeks instead of quarters.</p>
       </div>
@@ -416,49 +204,49 @@
   </div>
 </section>
 
-<!-- THE OUTCOME -->
+<!-- The outcome -->
 <section class="block">
   <div class="container-narrow">
     <h2 class="section">A decision, not a deck.</h2>
-    <p class="body">Most validation work ends in a framework. The Sprint ends in a two-page memo. Every load-bearing assumption is marked supported, invalidated, or inconclusive, with evidence attached and a confidence level named. The recommendation is explicit. Continue. Reshape. Stop.</p>
-    <p class="body">It is written the way a board wants to read it. What you knew before. What you know now. What changed the answer. What is still uncertain. What you would do in the next 90 days.</p>
+    <p>Most validation work ends in a framework. The Sprint ends in a two-page memo. Every load-bearing assumption is marked supported, invalidated, or inconclusive, with evidence attached and a confidence level named. The recommendation is explicit. Continue. Reshape. Stop.</p>
+    <p>It is written the way a board wants to read it. What you knew before. What you know now. What changed the answer. What is still uncertain. What you would do in the next 90 days.</p>
   </div>
 </section>
 
-<!-- TIERS -->
+<!-- Tiers -->
 <section class="block alt" id="tiers">
   <div class="container">
     <h2 class="section">Three tiers. One question.</h2>
-    <p class="body" style="font-size: 20px; color: var(--teal);">Is what you are building worth continuing to build?</p>
-    <div class="tiers">
-      <div class="tier-card">
-        <div class="name">L1 Diagnostic</div>
-        <div class="duration">2 weeks</div>
-        <div class="desc">A fast outside read on what you already know. Risk-scored recommendation memo with confidence levels.</div>
-        <div class="audience">Board pressure. Pre-pivot read. A fast second opinion.</div>
+    <p class="lede" style="max-width: none;">Is what you are building worth continuing to build?</p>
+    <div class="cards cols-3" style="margin-top: 28px;">
+      <div class="card tier">
+        <h3>L1 Diagnostic</h3>
+        <span class="tier-duration">2 weeks</span>
+        <p>A fast outside read on what you already know. Risk-scored recommendation memo with confidence levels.</p>
+        <div class="tier-audience">Board pressure. Pre-pivot read. A fast second opinion.</div>
       </div>
-      <div class="tier-card featured">
-        <div class="name">L2 Sprint</div>
-        <div class="duration">4 to 6 weeks</div>
-        <div class="desc">Two to three live, instrumented tests. A kill-or-commit memo backed by new evidence and a 90-day roadmap.</div>
-        <div class="audience">Mid-build teams facing a capital commit or roadmap call.</div>
+      <div class="card tier featured">
+        <h3>L2 Sprint</h3>
+        <span class="tier-duration">4 to 6 weeks</span>
+        <p>Two to three live, instrumented tests. A kill-or-commit memo backed by new evidence and a 90-day roadmap.</p>
+        <div class="tier-audience">Mid-build teams facing a capital commit or roadmap call.</div>
       </div>
-      <div class="tier-card">
-        <div class="name">L3 Extended</div>
-        <div class="duration">12 weeks</div>
-        <div class="desc">Two validation loops. Activation prototypes. Growth model. Operating engine handed to your team.</div>
-        <div class="audience">Teams with early signal who need proof at scale or a BU-level handoff.</div>
+      <div class="card tier">
+        <h3>L3 Extended</h3>
+        <span class="tier-duration">12 weeks</span>
+        <p>Two validation loops. Activation prototypes. Growth model. Operating engine handed to your team.</p>
+        <div class="tier-audience">Teams with early signal who need proof at scale or a BU-level handoff.</div>
       </div>
     </div>
-    <div class="tier-cta">Not sure which tier is right? <a href="#contact">30 minutes on a call, we can tell you.</a></div>
+    <p class="center" style="margin-top: 28px; font-size: 15px; color: var(--black-600);">Not sure which tier is right? <a href="/contact/" style="color: var(--prota-blue); font-weight: 500;">30 minutes on a call, we can tell you.</a></p>
   </div>
 </section>
 
-<!-- METHOD -->
+<!-- Method -->
 <section class="block">
   <div class="container">
     <h2 class="section">How we work.</h2>
-    <p class="body">The same method strip that runs every Prota engagement, inside the agentic-age timeline. Discover what we do and do not know. Experiment against the riskiest assumptions. Align on what the evidence says. Execute the next 90 days. Iterate as the evidence changes.</p>
+    <p style="max-width: 820px;">The same method strip that runs every Prota engagement, inside the agentic-age timeline. Discover what we do and do not know. Experiment against the riskiest assumptions. Align on what the evidence says. Execute the next 90 days. Iterate as the evidence changes.</p>
     <div class="method-strip">
       <span class="method-step">Discover</span>
       <span class="method-arrow">&rarr;</span>
@@ -470,82 +258,98 @@
       <span class="method-arrow">&rarr;</span>
       <span class="method-step">Iterate</span>
     </div>
+    <p style="margin-top: 28px;"><a href="/how-it-works/" class="card-cta">See the seven-step methodology</a></p>
   </div>
 </section>
 
-<!-- AUDIENCE -->
+<!-- Audience -->
 <section class="block alt">
   <div class="container">
     <h2 class="section">Built for teams with a decision on the calendar.</h2>
-    <div class="three-col">
+    <div class="cards cols-3">
       <div class="card">
-        <div class="eyebrow">Funded founders</div>
+        <span class="eyebrow">Funded founders</span>
         <p>Seed to Series B. Shipping with AI. Mid-build. A capital commit, a pivot, or a hiring call is three weeks away and the evidence is not as strong as the velocity.</p>
       </div>
       <div class="card">
-        <div class="eyebrow">Corporate innovation</div>
+        <span class="eyebrow">Corporate innovation</span>
         <p>BU and Innovation sponsors with a validation mandate. The board wants proof that the bet is worth continuing to fund, and the proof has to be defensible.</p>
       </div>
       <div class="card">
-        <div class="eyebrow">Product leaders at scaleups</div>
+        <span class="eyebrow">Product leaders at scaleups</span>
         <p>Post-PMF teams opening a new surface area. The cost of being wrong at the next step has gotten large enough that a structured read is cheaper than the miss.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROOF -->
-<section class="block">
+<!-- Proof -->
+<section class="block proof">
   <div class="container">
     <h2 class="section">Nine years of experiments. Four stories.</h2>
-    <div class="logo-strip">
-      <span class="logo">Citi Ventures</span>
-      <span class="logo">Visa</span>
-      <span class="logo">Clorox</span>
-      <span class="logo">Audubon</span>
-      <span class="logo">Daikin</span>
-      <span class="logo">Bird Buddy</span>
-      <span class="logo">Stix</span>
-    </div>
-    <div class="proof-grid">
-      <div class="proof-tile">
+    <div class="cards cols-2">
+      <div class="card">
         <div class="client">Citi Ventures</div>
-        <div class="title">Enterprise innovation, at scale.</div>
+        <h3>Enterprise innovation, at scale.</h3>
         <p>A portfolio of ideas, 100-plus experiments, and multiple new products. We installed an experimentation framework that produced comparable signals across bets and a reliable kill-or-commit cadence.</p>
+        <a href="/work/citi-ventures/" class="card-cta">Read more</a>
       </div>
-      <div class="proof-tile">
+      <div class="card">
         <div class="client">Clorox CatPal</div>
-        <div class="title">New CPG category, validated.</div>
+        <h3>New CPG category, validated.</h3>
         <p>Discovery, prototype, and demand testing that gave leaders decision-ready evidence to scale, pivot, or stop. Moved from new product category to validation and prototype to MVP launch.</p>
+        <a href="/work/clorox-catpal/" class="card-cta">Read more</a>
       </div>
-      <div class="proof-tile">
+      <div class="card">
         <div class="client">Bird Buddy</div>
-        <div class="title">Smart hardware, funded by demand.</div>
+        <h3>Smart hardware, funded by demand.</h3>
         <p>Onboarding and activation work supporting a crowdfunding raise that reached roughly twenty million in pre-sales, which funded the seed round.</p>
+        <a href="/work/bird-buddy/" class="card-cta">Read more</a>
       </div>
-      <div class="proof-tile">
+      <div class="card">
         <div class="client">Stix</div>
-        <div class="title">DTC golf, focused on growth.</div>
+        <h3>DTC golf, focused on growth.</h3>
         <p>Message and offer tests, merchandising improvements, and analytics cleanup that produced a focused growth plan the team could execute.</p>
+        <a href="/work/stix/" class="card-cta">Read more</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- Comparison with Continuous -->
 <section class="block alt">
+  <div class="container-narrow">
+    <h2 class="section">Learning Sprint vs Continuous.</h2>
+    <table class="compare">
+      <thead>
+        <tr><th></th><th>Learning Sprint</th><th>Continuous Validation</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>Decision shape</th><td>One question, one answer.</td><td>Many questions, on a rolling clock.</td></tr>
+        <tr><th>Duration</th><td>2 to 12 weeks (L1 / L2 / L3).</td><td>Monthly or quarterly retainer; engagements typically 6 to 12+ months.</td></tr>
+        <tr><th>Output</th><td>Two-page decision memo.</td><td>Monthly decision memo + rolling portfolio view.</td></tr>
+        <tr><th>Insights compound?</th><td>Within the engagement.</td><td>Across cycles, that&rsquo;s the whole point.</td></tr>
+        <tr><th>Best for</th><td>A specific decision on the calendar.</td><td>A team whose validation questions keep changing.</td></tr>
+      </tbody>
+    </table>
+    <p><a href="/continuous/" class="card-cta">Compare with Continuous Validation</a></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="block">
   <div class="container-narrow">
     <h2 class="section">Questions we hear.</h2>
     <details>
       <summary>When should I pick Learning Sprint over Continuous Validation?</summary>
-      <p>Pick the Learning Sprint when you have one decision on the calendar, a fundraise, a roadmap call, a board commit, a launch, and you need evidence on a specific date. Pick Continuous Validation when your validation question keeps changing, innovation portfolios, scaleups in growth-strategy mode, founders iterating positioning weekly. Same methodology, different cadence. <a href="../continuous/">See Continuous Validation</a> for the always-on alternative.</p>
+      <p>Pick the Learning Sprint when you have one decision on the calendar, a fundraise, a roadmap call, a board commit, a launch, and you need evidence on a specific date. Pick Continuous Validation when your validation question keeps changing, innovation portfolios, scaleups in growth-strategy mode, founders iterating positioning weekly. Same methodology, different cadence. <a href="/continuous/">See Continuous Validation</a> for the always-on alternative.</p>
     </details>
     <details>
       <summary>Who actually runs the work?</summary>
       <p>A multi-disciplinary Prota team. We keep the make-up of the team appropriate to the tier and the work. What we commit to is a full team, not a single consultant.</p>
     </details>
     <details>
-      <summary>What does "agentic inside the delivery" mean?</summary>
+      <summary>What does &ldquo;agentic inside the delivery&rdquo; mean?</summary>
       <p>We use the same agentic tools our clients are shipping with, applied to research synthesis, test build, analytics, and qualitative coding. The evidence standard stays the same. The timeline compresses from quarters to weeks.</p>
     </details>
     <details>
@@ -567,93 +371,47 @@
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="block" id="contact">
-  <div class="contact-wrap">
-    <h2 class="section" style="text-align: center;">Start with a 30-minute call.</h2>
-    <p class="body" style="text-align: center; margin: 0 auto 32px;">Tell us what you are building and the decision you are trying to make. We will tell you which tier fits and what a Sprint would look like. No pitch.</p>
-
-    <div id="success" class="success">
-      Got it. We will reach out within one business day with two or three time windows that work. If it is urgent, email us directly at <a href="mailto:vernon@protastudios.com" style="color: var(--teal); font-weight: 700;">vernon@protastudios.com</a>.
-    </div>
-
-    <form id="contact-form" class="contact" novalidate>
-      <div class="field-row">
-        <div class="field">
-          <label for="name">Full name <span class="required">*</span></label>
-          <input type="text" id="name" name="name" required placeholder="Jane Doe" />
-        </div>
-        <div class="field">
-          <label for="email">Work email <span class="required">*</span></label>
-          <input type="email" id="email" name="email" required placeholder="jane@company.com" />
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="company">Company <span class="required">*</span></label>
-          <input type="text" id="company" name="company" required placeholder="Acme Co" />
-        </div>
-        <div class="field">
-          <label for="role">Role <span class="required">*</span></label>
-          <input type="text" id="role" name="role" required placeholder="Founder, Head of Product, VP Innovation" />
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="stage">Team stage <span class="required">*</span></label>
-          <select id="stage" name="stage" required>
-            <option value="">Select one</option>
-            <option>Pre-seed</option>
-            <option>Seed</option>
-            <option>Series A</option>
-            <option>Series B</option>
-            <option>Corporate BU</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="tier">Tier of interest</label>
-          <select id="tier" name="tier">
-            <option value="">Not sure yet</option>
-            <option>L1 Diagnostic</option>
-            <option>L2 Sprint</option>
-            <option>L3 Extended</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="decision">What decision are you trying to make? <span class="required">*</span></label>
-        <textarea id="decision" name="decision" required rows="4" maxlength="500" placeholder="What is the call on the calendar? What would change the answer?"></textarea>
-      </div>
-      <div class="field">
-        <label for="window">Preferred call window</label>
-        <input type="text" id="window" name="window" placeholder="e.g. Tue and Wed mornings PT" />
-      </div>
-      <div class="honeypot" aria-hidden="true">
-        <label for="company-website">Company website (leave blank)</label>
-        <input type="text" id="company-website" name="company-website" tabindex="-1" autocomplete="off" />
-      </div>
-      <p class="consent">By submitting, you agree to be contacted by Prota Studios about the Learning Sprint. No list, no marketing automation.</p>
-      <button type="submit">Request a call</button>
-    </form>
-
-    <div class="calendar-fallback">
-      Prefer to book directly? Pick a time on our calendar.<br />
-      <a href="#" id="calendar-link">See open times</a><br />
-      <span style="font-size: 13px; color: var(--gray-600); margin-top: 16px; display: inline-block;">Or email us directly: <a href="mailto:vernon@protastudios.com" style="color: var(--navy); font-weight: 600;">vernon@protastudios.com</a></span>
-    </div>
+<!-- Final CTA -->
+<section class="block dark">
+  <div class="container-narrow center">
+    <h2>Start with a 30-minute call.</h2>
+    <p class="lede" style="margin: 0 auto 28px;">Tell us what you are building and the decision you are trying to make. We will tell you which tier fits and what a Sprint would look like. No pitch.</p>
+    <a href="/contact/" class="btn-primary">Book a call</a>
   </div>
 </section>
 
-<footer>
-  <div class="container inner">
-    <div>&copy; 2026 Prota Studios. The Learning Sprint is a productized offering of Prota&rsquo;s Validate program.</div>
-    <div><a href="https://www.protastudios.com">protastudios.com</a></div>
+<footer class="site">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Prota Studios</h4>
+        <p class="tagline">Continuous validation for AI-era teams. Driven by heart and data.</p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/how-it-works/">How it works</a></li>
+          <li><a href="/learning-sprint/">Learning Sprint</a></li>
+          <li><a href="/continuous/">Continuous</a></li>
+          <li><a href="/work/">Work</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="https://www.linkedin.com/company/protaventures/">LinkedIn</a></li>
+          <li><a href="https://x.com/ProtaVentures">Twitter / X</a></li>
+          <li><a href="https://www.protaventures.com/">Prota Ventures</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">2026 Prota Studios. All Rights Reserved.</div>
   </div>
 </footer>
 
-<script src="/contact-form.config.js"></script>
-<script type="module" src="/contact-form.js"></script>
 <script src="/review-bootstrap.js" defer></script>
 </body>
 </html>
