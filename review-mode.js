@@ -252,15 +252,15 @@ const ANCHOR_COUNTERS = Object.create(null);   // {tag: lastN} — per pageSlug-
 const CHROME_COUNTERS = Object.create(null);   // {tag: lastN} — per chrome-{tag}-{n}
 
 // =================================================================
-// Init guard. Order matters: LABELS + formatCount + getStatus declared
-// above so init() (called synchronously below) can use them.
+// Init guard is at the BOTTOM of this file. JS function declarations
+// are hoisted, but `const` declarations have a Temporal Dead Zone —
+// referencing a const from inside a hoisted function BEFORE the const
+// has executed throws ReferenceError. WIDGET_CHROME_SELECTOR (and a few
+// other module-level consts) is declared later in the file; calling
+// init() here (before those consts execute) would TDZ-throw on the first
+// isInWidgetChrome() call. Keeping init() at the bottom means every
+// module-level const has executed by the time init() runs.
 // =================================================================
-
-if (!cfg || !cfg.FIREBASE_CONFIG) {
-  console.error("[review-mode] missing PROTA_CONTACT_CONFIG.FIREBASE_CONFIG");
-} else {
-  init();
-}
 
 function init() {
   const app = initializeApp(cfg.FIREBASE_CONFIG, "review-mode");
@@ -1110,4 +1110,19 @@ function toast(text) {
   t.textContent = text;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
+}
+
+// =================================================================
+// Init guard — kept at the BOTTOM of the file. See the comment above
+// the `function init()` declaration for the TDZ-avoidance rationale.
+// By this point in module evaluation, every module-level `const`
+// (WIDGET_CHROME_SELECTOR, ANCHOR_TAGS_EFFECTIVE, NEVER_ANCHOR,
+// CHROME_COUNTERS, etc.) has been initialized, so init() — and the
+// function it calls — can reference them safely.
+// =================================================================
+
+if (!cfg || !cfg.FIREBASE_CONFIG) {
+  console.error("[review-mode] missing PROTA_CONTACT_CONFIG.FIREBASE_CONFIG");
+} else {
+  init();
 }
